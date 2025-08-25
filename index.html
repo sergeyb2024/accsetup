@@ -3,274 +3,142 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ACC Setup Optimizer - Car Stability Analysis</title>
+    <title>ACC Telemetry Analysis Tool</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div class="container">
-        <header class="header">
-            <h1>ACC Setup Optimizer</h1>
-            <p class="header-subtitle">Real-time Car Stability Analysis & Setup Tuning</p>
+        <!-- Header -->
+        <header class="app-header">
+            <h1>ACC Telemetry Analysis Tool</h1>
+            <p class="app-subtitle">Professional telemetry analysis for Assetto Corsa Competizione</p>
         </header>
 
-        <div class="main-layout">
-            <!-- Car Selection -->
-            <div class="car-selection card">
-                <h2>Car Selection</h2>
-                <div class="form-group">
-                    <label for="car-select" class="form-label">Select Car</label>
-                    <select id="car-select" class="form-control">
-                        <option value="">Choose a car...</option>
-                    </select>
-                </div>
-                <div class="car-info">
-                    <div class="car-stat">
-                        <span class="label">Weight Distribution:</span>
-                        <span id="weight-dist">-</span>
-                    </div>
-                    <div class="car-stat">
-                        <span class="label">Aero Efficiency:</span>
-                        <span id="aero-eff">-</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Setup Parameters -->
-            <div class="setup-panels">
-                <!-- Tires Panel -->
-                <div class="setup-panel card">
-                    <h3>Tires</h3>
-                    <div class="parameter-grid">
-                        <div class="parameter-control">
-                            <label class="form-label">Tire Pressure</label>
-                            <div class="control-group">
-                                <input type="range" id="tire_pressure" class="slider" min="20" max="35" step="0.1" value="26.5">
-                                <input type="number" class="number-input" min="20" max="35" step="0.1" value="26.5">
-                                <span class="unit">PSI</span>
-                            </div>
-                        </div>
-                        <div class="parameter-control">
-                            <label class="form-label">Front Camber</label>
-                            <div class="control-group">
-                                <input type="range" id="front_camber" class="slider" min="-4.0" max="-1.0" step="0.1" value="-2.8">
-                                <input type="number" class="number-input" min="-4.0" max="-1.0" step="0.1" value="-2.8">
-                                <span class="unit">°</span>
-                            </div>
-                        </div>
-                        <div class="parameter-control">
-                            <label class="form-label">Rear Camber</label>
-                            <div class="control-group">
-                                <input type="range" id="rear_camber" class="slider" min="-3.5" max="-1.0" step="0.1" value="-2.5">
-                                <input type="number" class="number-input" min="-3.5" max="-1.0" step="0.1" value="-2.5">
-                                <span class="unit">°</span>
-                            </div>
-                        </div>
-                        <div class="parameter-control">
-                            <label class="form-label">Front Toe</label>
-                            <div class="control-group">
-                                <input type="range" id="front_toe" class="slider" min="-0.5" max="0.5" step="0.01" value="0.0">
-                                <input type="number" class="number-input" min="-0.5" max="0.5" step="0.01" value="0.0">
-                                <span class="unit">°</span>
-                            </div>
-                        </div>
-                        <div class="parameter-control">
-                            <label class="form-label">Rear Toe</label>
-                            <div class="control-group">
-                                <input type="range" id="rear_toe" class="slider" min="-0.3" max="0.8" step="0.01" value="0.1">
-                                <input type="number" class="number-input" min="-0.3" max="0.8" step="0.01" value="0.1">
-                                <span class="unit">°</span>
-                            </div>
-                        </div>
-                        <div class="parameter-control">
-                            <label class="form-label">Caster</label>
-                            <div class="control-group">
-                                <input type="range" id="caster" class="slider" min="10" max="16" step="0.1" value="13">
-                                <input type="number" class="number-input" min="10" max="16" step="0.1" value="13">
-                                <span class="unit">°</span>
-                            </div>
+        <!-- File Upload Section -->
+        <section class="upload-section">
+            <div class="upload-grid">
+                <div class="upload-area">
+                    <div class="upload-box" id="csvUpload">
+                        <div class="upload-icon">📊</div>
+                        <h3>CSV Telemetry File</h3>
+                        <p>Upload MoTeC CSV file with telemetry data</p>
+                        <input type="file" id="csvFileInput" accept=".csv" class="file-input">
+                        <button class="btn btn--outline" onclick="document.getElementById('csvFileInput').click()">
+                            Choose File
+                        </button>
+                        <div class="upload-status" id="csvStatus"></div>
+                        <div class="progress-bar" id="csvProgress">
+                            <div class="progress-fill"></div>
                         </div>
                     </div>
                 </div>
-
-                <!-- Aerodynamics Panel -->
-                <div class="setup-panel card">
-                    <h3>Aerodynamics</h3>
-                    <div class="parameter-grid">
-                        <div class="parameter-control">
-                            <label class="form-label">Front Splitter</label>
-                            <div class="control-group">
-                                <input type="range" id="front_splitter" class="slider" min="0" max="15" step="1" value="5">
-                                <input type="number" class="number-input" min="0" max="15" step="1" value="5">
-                            </div>
-                        </div>
-                        <div class="parameter-control">
-                            <label class="form-label">Rear Wing</label>
-                            <div class="control-group">
-                                <input type="range" id="rear_wing" class="slider" min="0" max="15" step="1" value="8">
-                                <input type="number" class="number-input" min="0" max="15" step="1" value="8">
-                            </div>
-                        </div>
-                        <div class="parameter-control">
-                            <label class="form-label">Brake Ducts</label>
-                            <div class="control-group">
-                                <input type="range" id="brake_ducts" class="slider" min="0" max="6" step="1" value="3">
-                                <input type="number" class="number-input" min="0" max="6" step="1" value="3">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Suspension Panel -->
-                <div class="setup-panel card">
-                    <h3>Suspension</h3>
-                    <div class="parameter-grid">
-                        <div class="parameter-control">
-                            <label class="form-label">Front Wheel Rate</label>
-                            <div class="control-group">
-                                <input type="range" id="front_wheel_rate" class="slider" min="80000" max="200000" step="1000" value="130000">
-                                <input type="number" class="number-input" min="80000" max="200000" step="1000" value="130000">
-                                <span class="unit">N/m</span>
-                            </div>
-                        </div>
-                        <div class="parameter-control">
-                            <label class="form-label">Rear Wheel Rate</label>
-                            <div class="control-group">
-                                <input type="range" id="rear_wheel_rate" class="slider" min="80000" max="200000" step="1000" value="120000">
-                                <input type="number" class="number-input" min="80000" max="200000" step="1000" value="120000">
-                                <span class="unit">N/m</span>
-                            </div>
-                        </div>
-                        <div class="parameter-control">
-                            <label class="form-label">Front Ride Height</label>
-                            <div class="control-group">
-                                <input type="range" id="front_ride_height" class="slider" min="50" max="120" step="1" value="65">
-                                <input type="number" class="number-input" min="50" max="120" step="1" value="65">
-                                <span class="unit">mm</span>
-                            </div>
-                        </div>
-                        <div class="parameter-control">
-                            <label class="form-label">Rear Ride Height</label>
-                            <div class="control-group">
-                                <input type="range" id="rear_ride_height" class="slider" min="50" max="120" step="1" value="70">
-                                <input type="number" class="number-input" min="50" max="120" step="1" value="70">
-                                <span class="unit">mm</span>
-                            </div>
-                        </div>
-                        <div class="parameter-control">
-                            <label class="form-label">Front ARB</label>
-                            <div class="control-group">
-                                <input type="range" id="front_arb" class="slider" min="0" max="40" step="1" value="15">
-                                <input type="number" class="number-input" min="0" max="40" step="1" value="15">
-                            </div>
-                        </div>
-                        <div class="parameter-control">
-                            <label class="form-label">Rear ARB</label>
-                            <div class="control-group">
-                                <input type="range" id="rear_arb" class="slider" min="0" max="40" step="1" value="12">
-                                <input type="number" class="number-input" min="0" max="40" step="1" value="12">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Electronics Panel -->
-                <div class="setup-panel card">
-                    <h3>Electronics</h3>
-                    <div class="parameter-grid">
-                        <div class="parameter-control">
-                            <label class="form-label">Traction Control</label>
-                            <div class="control-group">
-                                <input type="range" id="traction_control" class="slider" min="0" max="11" step="1" value="3">
-                                <input type="number" class="number-input" min="0" max="11" step="1" value="3">
-                            </div>
-                        </div>
-                        <div class="parameter-control">
-                            <label class="form-label">ABS</label>
-                            <div class="control-group">
-                                <input type="range" id="abs" class="slider" min="0" max="11" step="1" value="3">
-                                <input type="number" class="number-input" min="0" max="11" step="1" value="3">
-                            </div>
-                        </div>
-                        <div class="parameter-control">
-                            <label class="form-label">Brake Balance</label>
-                            <div class="control-group">
-                                <input type="range" id="brake_balance" class="slider" min="45" max="65" step="0.1" value="55">
-                                <input type="number" class="number-input" min="45" max="65" step="0.1" value="55">
-                                <span class="unit">%</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Differential Panel -->
-                <div class="setup-panel card">
-                    <h3>Differential</h3>
-                    <div class="parameter-grid">
-                        <div class="parameter-control">
-                            <label class="form-label">Preload</label>
-                            <div class="control-group">
-                                <input type="range" id="diff_preload" class="slider" min="20" max="300" step="5" value="80">
-                                <input type="number" class="number-input" min="20" max="300" step="5" value="80">
-                                <span class="unit">Nm</span>
-                            </div>
-                        </div>
-                        <div class="parameter-control">
-                            <label class="form-label">Coast</label>
-                            <div class="control-group">
-                                <input type="range" id="diff_coast" class="slider" min="0" max="80" step="1" value="15">
-                                <input type="number" class="number-input" min="0" max="80" step="1" value="15">
-                                <span class="unit">%</span>
-                            </div>
-                        </div>
-                        <div class="parameter-control">
-                            <label class="form-label">Acceleration</label>
-                            <div class="control-group">
-                                <input type="range" id="diff_accel" class="slider" min="0" max="100" step="1" value="35">
-                                <input type="number" class="number-input" min="0" max="100" step="1" value="35">
-                                <span class="unit">%</span>
-                            </div>
+                
+                <div class="upload-area">
+                    <div class="upload-box" id="setupUpload">
+                        <div class="upload-icon">⚙️</div>
+                        <h3>Car Setup JSON</h3>
+                        <p>Upload car setup configuration file</p>
+                        <input type="file" id="setupFileInput" accept=".json" class="file-input">
+                        <button class="btn btn--outline" onclick="document.getElementById('setupFileInput').click()">
+                            Choose File
+                        </button>
+                        <div class="upload-status" id="setupStatus"></div>
+                        <div class="progress-bar" id="setupProgress">
+                            <div class="progress-fill"></div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Stability Analysis -->
-            <div class="analysis-section">
-                <div class="stability-display card">
-                    <h2>Stability Analysis</h2>
-                    <div class="stability-metrics">
-                        <div class="stability-gauge">
-                            <div class="gauge-label">Stability Index</div>
-                            <div class="gauge-value" id="stability-index">0</div>
-                            <div class="gauge-description" id="stability-description">Neutral</div>
-                        </div>
-                        <div class="stability-recommendations">
-                            <h4>Recommendations</h4>
-                            <ul id="recommendations-list">
-                                <li>Select a car to begin analysis</li>
-                            </ul>
-                        </div>
+            <div class="sample-data-section">
+                <button class="btn btn--secondary" id="loadSampleData">
+                    Load Sample Data for Demo
+                </button>
+            </div>
+        </section>
+
+        <!-- Setup Controls Section -->
+        <section class="setup-controls hidden" id="setupControls">
+            <div class="card">
+                <div class="card__header">
+                    <h2>Car Setup Parameters</h2>
+                    <p class="setup-subtitle">Adjust parameters to analyze their impact on handling</p>
+                </div>
+                <div class="card__body">
+                    <div class="setup-grid" id="setupSliders">
+                        <!-- Dynamic sliders will be generated here -->
                     </div>
                 </div>
+            </div>
+        </section>
 
-                <div class="chart-section card">
-                    <h2>Track Stability Analysis</h2>
+        <!-- Analysis Results Section -->
+        <section class="analysis-section hidden" id="analysisSection">
+            <!-- Charts Section -->
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <h3>Stability Analysis</h3>
+                    <p class="chart-subtitle">Understeer/Oversteer events over track distance</p>
                     <div class="chart-container" style="position: relative; height: 400px;">
-                        <canvas id="stability-chart"></canvas>
+                        <canvas id="stabilityChart" width="800" height="400"></canvas>
                     </div>
                     <div class="chart-legend">
-                        <span class="legend-item oversteer">Red = Oversteer</span>
-                        <span class="legend-item neutral">Yellow = Neutral</span>
-                        <span class="legend-item understeer">Blue = Understeer</span>
+                        <div class="legend-item">
+                            <div class="legend-color understeer"></div>
+                            <span>Understeer</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color neutral"></div>
+                            <span>Neutral</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color oversteer"></div>
+                            <span>Oversteer</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <h3>Trajectory Analysis</h3>
+                    <p class="chart-subtitle">Optimal racing line vs actual trajectory</p>
+                    <div class="chart-container" style="position: relative; height: 400px;">
+                        <canvas id="trajectoryChart" width="800" height="400"></canvas>
+                    </div>
+                    <div class="chart-legend">
+                        <div class="legend-item">
+                            <div class="legend-line optimal"></div>
+                            <span>Optimal Racing Line</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-line actual"></div>
+                            <span>Actual Trajectory</span>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Control Buttons -->
-            <div class="controls">
-                <button id="reset-setup" class="btn btn--secondary">Reset to Default</button>
-                <button id="optimize-setup" class="btn btn--primary">Auto Optimize</button>
+            <!-- Recommendations Panel -->
+            <div class="recommendations-panel">
+                <div class="card">
+                    <div class="card__header">
+                        <h2>Setup Recommendations</h2>
+                        <p class="recommendations-subtitle">Suggestions based on telemetry analysis</p>
+                    </div>
+                    <div class="card__body">
+                        <div class="recommendations-grid" id="recommendationsList">
+                            <!-- Recommendations will be generated here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Loading Overlay -->
+        <div class="loading-overlay hidden" id="loadingOverlay">
+            <div class="loading-content">
+                <div class="spinner"></div>
+                <h3>Processing Telemetry Data...</h3>
+                <p id="loadingMessage">Initializing analysis...</p>
             </div>
         </div>
     </div>
