@@ -1,4 +1,4 @@
-// ACC Telemetry Analysis Application - Enhanced Version
+// ACC Telemetry Analysis Application - Enhanced Version with Event Map
 class ACCTelemetryAnalyzer {
     constructor() {
         this.telemetryData = [];
@@ -8,6 +8,24 @@ class ACCTelemetryAnalyzer {
         this.currentCarClass = null;
         this.isProcessing = false;
         this.charts = {};
+        this.currentChartTab = 'stability';
+        this.fullscreenChart = null;
+        
+        // Car ID Lookup from provided data
+        this.carIdLookup = {
+            "ferrari_296_gt3": "Ferrari 296 GT3",
+            "audi_r8_lms_gt3_evo_ii": "Audi R8 LMS GT3 EVO II",
+            "mclaren_720s_gt3_evo": "McLaren 720S GT3 EVO",
+            "mercedes_amg_gt3_evo": "Mercedes AMG GT3 EVO",
+            "porsche_992_gt3_r": "Porsche 911 GT3 R",
+            "bmw_m4_gt3": "BMW M4 GT3",
+            "lamborghini_huracan_gt3_evo_2": "Lamborghini Huracan GT3 EVO II",
+            "aston_martin_v12_vantage_gt3": "Aston Martin Vantage V12 GT3",
+            "mercedes_amg_gt2": "Mercedes AMG GT2",
+            "audi_r8_lms_gt2": "Audi R8 LMS GT2",
+            "ktm_xbow_gt2": "KTM X-Bow GT2",
+            "maserati_mc20_gt2": "Maserati MC20 GT2"
+        };
         
         // Car Database Integration
         this.carDatabase = {
@@ -47,42 +65,6 @@ class ACCTelemetryAnalyzer {
                     "tyre_press_rf": {"min": 21.0, "max": 27.0, "default": 26.5},
                     "tyre_press_lr": {"min": 21.0, "max": 27.0, "default": 26.5},
                     "tyre_press_rr": {"min": 21.0, "max": 27.0, "default": 26.5}
-                },
-                "McLaren 720S GT3 EVO": {
-                    "front_spring_rate": {"min": 85000, "max": 190000, "default": 115000},
-                    "rear_spring_rate": {"min": 85000, "max": 190000, "default": 105000},
-                    "front_toe": {"min": -0.30, "max": 0.30, "default": -0.15},
-                    "rear_toe": {"min": -0.05, "max": 0.30, "default": 0.05},
-                    "front_camber": {"min": -5.0, "max": 0.0, "default": -3.5},
-                    "rear_camber": {"min": -3.5, "max": 0.0, "default": -3.5},
-                    "front_arb": {"min": 1, "max": 6, "default": 3},
-                    "rear_arb": {"min": 1, "max": 6, "default": 4},
-                    "differential_power": {"min": 0, "max": 100, "default": 60},
-                    "brake_balance": {"min": 50.0, "max": 70.0, "default": 57.5},
-                    "front_ride_height": {"min": 50, "max": 90, "default": 63},
-                    "rear_ride_height": {"min": 50, "max": 90, "default": 69},
-                    "tyre_press_lf": {"min": 21.0, "max": 27.0, "default": 26.5},
-                    "tyre_press_rf": {"min": 21.0, "max": 27.0, "default": 26.5},
-                    "tyre_press_lr": {"min": 21.0, "max": 27.0, "default": 26.5},
-                    "tyre_press_rr": {"min": 21.0, "max": 27.0, "default": 26.5}
-                },
-                "Porsche 911 GT3 R": {
-                    "front_spring_rate": {"min": 100000, "max": 220000, "default": 140000},
-                    "rear_spring_rate": {"min": 100000, "max": 220000, "default": 130000},
-                    "front_toe": {"min": -0.30, "max": 0.30, "default": -0.15},
-                    "rear_toe": {"min": -0.05, "max": 0.30, "default": 0.05},
-                    "front_camber": {"min": -5.0, "max": 0.0, "default": -4.2},
-                    "rear_camber": {"min": -3.5, "max": 0.0, "default": -3.5},
-                    "front_arb": {"min": 1, "max": 6, "default": 3},
-                    "rear_arb": {"min": 1, "max": 6, "default": 4},
-                    "differential_power": {"min": 0, "max": 100, "default": 75},
-                    "brake_balance": {"min": 50.0, "max": 70.0, "default": 60.0},
-                    "front_ride_height": {"min": 50, "max": 90, "default": 60},
-                    "rear_ride_height": {"min": 50, "max": 90, "default": 65},
-                    "tyre_press_lf": {"min": 21.0, "max": 27.0, "default": 26.5},
-                    "tyre_press_rf": {"min": 21.0, "max": 27.0, "default": 26.5},
-                    "tyre_press_lr": {"min": 21.0, "max": 27.0, "default": 26.5},
-                    "tyre_press_rr": {"min": 21.0, "max": 27.0, "default": 26.5}
                 }
             },
             "GT2": {
@@ -107,19 +89,6 @@ class ACCTelemetryAnalyzer {
             }
         };
 
-        // Corner speed thresholds
-        this.cornerSpeedThresholds = {
-            "slow_corner_max_speed": 120,
-            "fast_corner_min_speed": 180
-        };
-
-        // Recommendation priorities
-        this.recommendationPriorities = {
-            "critical": {"icon": "🔧", "color": "#e74c3c", "threshold": 0.2},
-            "moderate": {"icon": "⚙️", "color": "#f39c12", "threshold": 0.1}, 
-            "minor": {"icon": "🔍", "color": "#3498db", "threshold": 0.05}
-        };
-
         this.physicsConstants = {
             UNDERSTEER_THRESHOLD: 0.1,
             OVERSTEER_THRESHOLD: -0.1,
@@ -130,15 +99,34 @@ class ACCTelemetryAnalyzer {
             MAX_LATERAL_G: 2.5
         };
 
+        // Initialize immediately
         this.init();
     }
 
     init() {
+        console.log('Initializing ACC Telemetry Analyzer...');
+        
+        // Generate sample data first
         this.generateSampleTelemetryData();
+        
+        // Set up all event listeners
         this.setupEventListeners();
         this.setupThemeToggle();
         this.setupCollapsibleSections();
         this.setupRecommendationFilters();
+        
+        // Wait for DOM to be ready, then setup chart functionality
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                this.setupChartTabs();
+                this.setupFullscreenModal();
+            });
+        } else {
+            this.setupChartTabs();
+            this.setupFullscreenModal();
+        }
+        
+        console.log('ACC Telemetry Analyzer initialized successfully');
     }
 
     setupEventListeners() {
@@ -158,17 +146,188 @@ class ACCTelemetryAnalyzer {
             });
         }
 
-        // Sample data button
+        // Sample data button - ensure this works
         const loadSampleBtn = document.getElementById('loadSampleData');
         if (loadSampleBtn) {
             loadSampleBtn.addEventListener('click', (e) => {
                 e.preventDefault();
+                console.log('Sample data button clicked');
                 this.loadSampleData();
             });
+        } else {
+            console.warn('Load sample data button not found');
         }
 
         // Drag and drop functionality
         this.setupDragAndDrop();
+    }
+
+    setupChartTabs() {
+        console.log('Setting up chart tabs...');
+        const tabs = document.querySelectorAll('.chart-tab');
+        
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const chartType = tab.getAttribute('data-chart');
+                console.log('Chart tab clicked:', chartType);
+                this.switchChartTab(chartType);
+            });
+        });
+
+        // Chart control buttons
+        ['stability', 'trajectory', 'eventMap'].forEach(chartType => {
+            const resetBtn = document.getElementById(`${chartType}Reset`);
+            const fullscreenBtn = document.getElementById(`${chartType}Fullscreen`);
+            
+            if (resetBtn) {
+                resetBtn.addEventListener('click', () => {
+                    console.log('Reset zoom clicked for:', chartType);
+                    this.resetChartZoom(chartType);
+                });
+            }
+            
+            if (fullscreenBtn) {
+                fullscreenBtn.addEventListener('click', () => {
+                    console.log('Fullscreen clicked for:', chartType);
+                    this.openFullscreenChart(chartType);
+                });
+            }
+        });
+        
+        console.log('Chart tabs setup complete');
+    }
+
+    setupFullscreenModal() {
+        const modal = document.getElementById('fullscreenModal');
+        const closeBtn = document.getElementById('closeFullscreen');
+        
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => {
+                this.closeFullscreenChart();
+            });
+        }
+
+        // Close on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && modal && !modal.classList.contains('hidden')) {
+                this.closeFullscreenChart();
+            }
+        });
+    }
+
+    switchChartTab(chartType) {
+        console.log('Switching to chart tab:', chartType);
+        
+        // Update tab states
+        document.querySelectorAll('.chart-tab').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        
+        const activeTab = document.querySelector(`[data-chart="${chartType}"]`);
+        if (activeTab) {
+            activeTab.classList.add('active');
+        }
+        
+        // Update panel visibility
+        document.querySelectorAll('.chart-panel').forEach(panel => {
+            panel.classList.remove('active');
+        });
+        
+        const activePanel = document.getElementById(`${chartType}Panel`);
+        if (activePanel) {
+            activePanel.classList.add('active');
+        }
+        
+        this.currentChartTab = chartType;
+        
+        // Trigger chart resize if needed
+        setTimeout(() => {
+            const chart = this.charts[`${chartType}Chart`];
+            if (chart && typeof chart.resize === 'function') {
+                chart.resize();
+            }
+        }, 100);
+    }
+
+    resetChartZoom(chartType) {
+        const chart = this.charts[`${chartType}Chart`];
+        if (chart && typeof chart.resetZoom === 'function') {
+            chart.resetZoom();
+        }
+    }
+
+    openFullscreenChart(chartType) {
+        const modal = document.getElementById('fullscreenModal');
+        const title = document.getElementById('fullscreenTitle');
+        const canvas = document.getElementById('fullscreenChart');
+        
+        if (!modal || !title || !canvas) {
+            console.warn('Fullscreen modal elements not found');
+            return;
+        }
+        
+        const chartTitles = {
+            'stability': 'Stability Analysis - Fullscreen',
+            'trajectory': 'Trajectory Analysis - Fullscreen',
+            'eventMap': 'Event Map - Fullscreen'
+        };
+        
+        title.textContent = chartTitles[chartType] || 'Chart - Fullscreen';
+        modal.classList.remove('hidden');
+        
+        // Clone chart data and create fullscreen version
+        setTimeout(() => {
+            this.createFullscreenChart(chartType, canvas);
+        }, 100);
+    }
+
+    createFullscreenChart(chartType, canvas) {
+        const ctx = canvas.getContext('2d');
+        
+        if (this.fullscreenChart) {
+            this.fullscreenChart.destroy();
+        }
+        
+        const originalChart = this.charts[`${chartType}Chart`];
+        if (!originalChart) {
+            console.warn('Original chart not found for fullscreen:', chartType);
+            return;
+        }
+        
+        // Clone the chart configuration
+        const config = JSON.parse(JSON.stringify(originalChart.config));
+        config.options.maintainAspectRatio = false;
+        config.options.responsive = true;
+        
+        // Add zoom plugin configuration if available
+        if (window.zoomPlugin || (Chart && Chart.registry && Chart.registry.plugins.get('zoom'))) {
+            config.options.plugins = config.options.plugins || {};
+            config.options.plugins.zoom = {
+                zoom: {
+                    wheel: { enabled: true },
+                    pinch: { enabled: true },
+                    mode: chartType === 'stability' ? 'x' : 'xy'
+                },
+                pan: {
+                    enabled: true,
+                    mode: chartType === 'stability' ? 'x' : 'xy'
+                }
+            };
+        }
+        
+        this.fullscreenChart = new Chart(ctx, config);
+    }
+
+    closeFullscreenChart() {
+        const modal = document.getElementById('fullscreenModal');
+        if (modal) {
+            modal.classList.add('hidden');
+        }
+        
+        if (this.fullscreenChart) {
+            this.fullscreenChart.destroy();
+            this.fullscreenChart = null;
+        }
     }
 
     setupThemeToggle() {
@@ -316,7 +475,7 @@ class ACCTelemetryAnalyzer {
             const text = await this.readFileAsText(file);
             const setupData = JSON.parse(text);
             
-            // Extract car model from setup file or filename
+            // Enhanced car model detection
             this.detectCarModel(setupData, file.name);
             
             // Apply car-specific limits and populate setup data
@@ -339,33 +498,55 @@ class ACCTelemetryAnalyzer {
     }
 
     detectCarModel(setupData, filename) {
-        // Try to detect car model from setup data
         let detectedCar = null;
         let detectedClass = null;
         
-        // Check for car model in setup data
-        if (setupData.carModel || setupData.car_model || setupData.model) {
-            const modelName = setupData.carModel || setupData.car_model || setupData.model;
-            
-            // Search through car database
-            Object.keys(this.carDatabase).forEach(carClass => {
-                Object.keys(this.carDatabase[carClass]).forEach(carName => {
-                    if (carName.toLowerCase().includes(modelName.toLowerCase()) || 
-                        modelName.toLowerCase().includes(carName.toLowerCase())) {
-                        detectedCar = carName;
-                        detectedClass = carClass;
-                    }
-                });
-            });
+        // First, try to detect from carId or carModel fields
+        const possibleCarIdFields = ['carId', 'carModel', 'car_id', 'car_model', 'model', 'car'];
+        
+        for (const field of possibleCarIdFields) {
+            if (setupData[field]) {
+                const carIdValue = setupData[field].toString().toLowerCase();
+                
+                // Check against carIdLookup
+                const matchedKey = Object.keys(this.carIdLookup).find(key => 
+                    key.toLowerCase() === carIdValue || carIdValue.includes(key.toLowerCase())
+                );
+                
+                if (matchedKey) {
+                    detectedCar = this.carIdLookup[matchedKey];
+                    // Determine class based on car name
+                    detectedClass = detectedCar.includes('GT2') ? 'GT2' : 'GT3';
+                    break;
+                }
+            }
         }
         
-        // If no car detected, try to infer from filename
+        // If no car detected from fields, try filename parsing
         if (!detectedCar && filename) {
-            const name = filename.toLowerCase();
+            const name = filename.toLowerCase().replace(/[_\-\.]/g, '');
+            
+            // Try to match against carIdLookup keys
+            const matchedKey = Object.keys(this.carIdLookup).find(key => {
+                const normalizedKey = key.toLowerCase().replace(/[_\-\.]/g, '');
+                return name.includes(normalizedKey) || normalizedKey.includes(name.replace('.json', ''));
+            });
+            
+            if (matchedKey) {
+                detectedCar = this.carIdLookup[matchedKey];
+                detectedClass = detectedCar.includes('GT2') ? 'GT2' : 'GT3';
+            }
+        }
+        
+        // If still no car detected, try partial matching from car database
+        if (!detectedCar) {
             Object.keys(this.carDatabase).forEach(carClass => {
                 Object.keys(this.carDatabase[carClass]).forEach(carName => {
-                    const carKey = carName.toLowerCase().replace(/\s+/g, '');
-                    if (name.includes(carKey) || name.includes(carName.toLowerCase())) {
+                    const searchTerms = [filename, JSON.stringify(setupData)].join(' ').toLowerCase();
+                    const carNameNormalized = carName.toLowerCase().replace(/\s+/g, '');
+                    
+                    if (searchTerms.includes(carNameNormalized) || 
+                        searchTerms.includes(carName.toLowerCase())) {
                         detectedCar = carName;
                         detectedClass = carClass;
                     }
@@ -377,10 +558,13 @@ class ACCTelemetryAnalyzer {
         if (!detectedCar) {
             detectedCar = "Ferrari 296 GT3";
             detectedClass = "GT3";
+            console.warn('Could not detect car model from setup file, defaulting to Ferrari 296 GT3');
         }
         
         this.currentCarModel = detectedCar;
         this.currentCarClass = detectedClass;
+        
+        console.log(`Detected car: ${detectedCar} (${detectedClass})`);
     }
 
     applyCarSpecificSetup(setupData) {
@@ -469,18 +653,19 @@ class ACCTelemetryAnalyzer {
             await new Promise(resolve => setTimeout(resolve, 10));
         }
 
-        // Downsample to max 10,000 points for performance
-        if (this.telemetryData.length > 10000) {
-            const step = Math.floor(this.telemetryData.length / 10000);
+        // Downsample to max 12,000 points for performance
+        if (this.telemetryData.length > 12000) {
+            const step = Math.floor(this.telemetryData.length / 12000);
             this.telemetryData = this.telemetryData.filter((_, index) => index % step === 0);
         }
     }
 
     generateSampleTelemetryData() {
+        console.log('Generating sample telemetry data...');
         // Generate more comprehensive sample data for demo
         this.sampleTelemetryData = [];
         const trackLength = 4000; // 4km track
-        const dataPoints = 400;
+        const dataPoints = 800;
         
         for (let i = 0; i < dataPoints; i++) {
             const distance = (i / dataPoints) * trackLength;
@@ -525,6 +710,7 @@ class ACCTelemetryAnalyzer {
                 Y: Math.sin(distance / 500) * 150 + 200
             });
         }
+        console.log(`Generated ${this.sampleTelemetryData.length} sample data points`);
     }
 
     loadSampleData() {
@@ -546,44 +732,70 @@ class ACCTelemetryAnalyzer {
                     setTimeout(() => {
                         this.updateLoadingProgress(100);
                         
-                        // Load sample data
-                        this.telemetryData = [...this.sampleTelemetryData];
-                        this.currentCarModel = "Ferrari 296 GT3";
-                        this.currentCarClass = "GT3";
-                        
-                        // Apply sample setup with car-specific limits
-                        const sampleSetupData = {
-                            "front_spring_rate": 125000,
-                            "rear_spring_rate": 115000,
-                            "front_toe": -0.15,
-                            "rear_toe": 0.05,
-                            "front_camber": -4.0,
-                            "rear_camber": -3.5,
-                            "front_arb": 3,
-                            "rear_arb": 4,
-                            "differential_power": 70,
-                            "brake_balance": 59.0,
-                            "front_ride_height": 62,
-                            "rear_ride_height": 68,
-                            "tyre_press_lf": 26.5,
-                            "tyre_press_rf": 26.5,
-                            "tyre_press_lr": 26.5,
-                            "tyre_press_rr": 26.5
-                        };
-                        
-                        this.applyCarSpecificSetup(sampleSetupData);
-                        
-                        this.showUploadStatus('csvStatus', `✓ Sample data loaded (${this.telemetryData.length} points)`, 'success');
-                        this.showUploadStatus('setupStatus', `✓ Ferrari 296 GT3 setup loaded`, 'success');
-                        
-                        this.displayCarInfo();
-                        this.startAnalysis();
+                        try {
+                            // Load sample data
+                            this.telemetryData = [...this.sampleTelemetryData];
+                            this.currentCarModel = "Ferrari 296 GT3";
+                            this.currentCarClass = "GT3";
+                            
+                            console.log(`Loaded ${this.telemetryData.length} telemetry data points`);
+                            
+                            // Apply sample setup with car-specific limits
+                            const sampleSetupData = {
+                                "carId": "ferrari_296_gt3",
+                                "front_spring_rate": 125000,
+                                "rear_spring_rate": 115000,
+                                "front_toe": -0.15,
+                                "rear_toe": 0.05,
+                                "front_camber": -4.0,
+                                "rear_camber": -3.5,
+                                "front_arb": 3,
+                                "rear_arb": 4,
+                                "differential_power": 70,
+                                "brake_balance": 59.0,
+                                "front_ride_height": 62,
+                                "rear_ride_height": 68,
+                                "tyre_press_lf": 26.5,
+                                "tyre_press_rf": 26.5,
+                                "tyre_press_lr": 26.5,
+                                "tyre_press_rr": 26.5
+                            };
+                            
+                            this.applyCarSpecificSetup(sampleSetupData);
+                            
+                            this.showUploadStatus('csvStatus', `✓ Sample data loaded (${this.telemetryData.length} points)`, 'success');
+                            this.showUploadStatus('setupStatus', `✓ Ferrari 296 GT3 setup loaded`, 'success');
+                            
+                            this.displayCarInfo();
+                            
+                            // Start analysis
+                            this.performAnalysis();
+                            this.renderCharts();
+                            this.generateRecommendations();
+                            this.updateStabilityGauges();
+                            
+                            // Show analysis sections
+                            const analysisSection = document.getElementById('analysisSection');
+                            const stabilityGauges = document.getElementById('stabilityGauges');
+                            
+                            if (analysisSection) {
+                                analysisSection.classList.remove('hidden');
+                                console.log('Analysis section shown');
+                            }
+                            if (stabilityGauges) {
+                                stabilityGauges.classList.remove('hidden');
+                                console.log('Stability gauges shown');
+                            }
+                            
+                        } catch (error) {
+                            console.error('Error loading sample data:', error);
+                        }
                         
                         this.hideLoadingOverlay();
-                    }, 500);
-                }, 500);
-            }, 500);
-        }, 500);
+                    }, 300);
+                }, 300);
+            }, 300);
+        }, 300);
     }
 
     generateSetupControls() {
@@ -654,7 +866,7 @@ class ACCTelemetryAnalyzer {
                     // Debounce updates
                     clearTimeout(updateTimeout);
                     updateTimeout = setTimeout(() => {
-                        this.updateAnalysis();
+                        this.updateAnalysisWithAnimation();
                     }, 300);
                 });
             }
@@ -674,6 +886,50 @@ class ACCTelemetryAnalyzer {
         if (setupControls) {
             setupControls.classList.remove('hidden');
         }
+    }
+
+    updateAnalysisWithAnimation() {
+        if (this.isProcessing) return;
+        this.isProcessing = true;
+
+        // Perform analysis
+        this.performAnalysis();
+        
+        // Update charts with smooth transitions
+        this.renderCharts();
+        this.generateRecommendations();
+        this.updateStabilityGauges();
+        
+        // If event map is visible, animate the changes
+        if (this.currentChartTab === 'eventMap') {
+            this.animateEventMapChanges();
+        }
+        
+        setTimeout(() => {
+            this.isProcessing = false;
+        }, 500);
+    }
+
+    animateEventMapChanges() {
+        const chart = this.charts.eventMapChart;
+        if (!chart) return;
+        
+        // Get the event data
+        const eventData = this.analysisResults.eventMap;
+        if (!eventData) return;
+        
+        // Update scatter points with animation
+        const scatterDatasets = chart.data.datasets.filter(ds => ds.type === 'scatter' || !ds.showLine);
+        scatterDatasets.forEach(dataset => {
+            if (dataset.label === 'Understeer Events') {
+                dataset.data = eventData.understeerEvents;
+            } else if (dataset.label === 'Oversteer Events') {
+                dataset.data = eventData.oversteerEvents;
+            }
+        });
+        
+        // Animate the update
+        chart.update('active');
     }
 
     getParameterLabel(paramKey) {
@@ -717,59 +973,13 @@ class ACCTelemetryAnalyzer {
         }
     }
 
-    startAnalysis() {
-        this.showLoadingOverlay('Analyzing telemetry data...', 0);
-        
-        setTimeout(() => {
-            this.updateLoadingProgress(25);
-            this.updateLoadingMessage('Processing stability data...');
-            
-            setTimeout(() => {
-                this.updateLoadingProgress(50);
-                this.updateLoadingMessage('Analyzing trajectory...');
-                
-                setTimeout(() => {
-                    this.updateLoadingProgress(75);
-                    this.updateLoadingMessage('Generating recommendations...');
-                    
-                    setTimeout(() => {
-                        this.updateLoadingProgress(100);
-                        
-                        this.performAnalysis();
-                        this.renderCharts();
-                        this.generateRecommendations();
-                        this.updateStabilityGauges();
-                        
-                        const analysisSection = document.getElementById('analysisSection');
-                        const stabilityGauges = document.getElementById('stabilityGauges');
-                        
-                        if (analysisSection) analysisSection.classList.remove('hidden');
-                        if (stabilityGauges) stabilityGauges.classList.remove('hidden');
-                        
-                        this.hideLoadingOverlay();
-                    }, 500);
-                }, 500);
-            }, 500);
-        }, 500);
-    }
-
-    updateAnalysis() {
-        if (this.isProcessing) return;
-        this.isProcessing = true;
-
-        setTimeout(() => {
-            this.performAnalysis();
-            this.renderCharts();
-            this.generateRecommendations();
-            this.updateStabilityGauges();
-            this.isProcessing = false;
-        }, 100);
-    }
-
     performAnalysis() {
+        console.log('Performing telemetry analysis...');
         this.analysisResults.stabilityAnalysis = this.calculateStabilityAnalysis();
         this.analysisResults.trajectoryAnalysis = this.calculateTrajectoryAnalysis();
         this.analysisResults.cornerAnalysis = this.calculateCornerAnalysis();
+        this.analysisResults.eventMap = this.calculateEventMap();
+        console.log('Analysis complete');
     }
 
     calculateStabilityAnalysis() {
@@ -795,6 +1005,68 @@ class ACCTelemetryAnalyzer {
 
         // Apply moving average smoothing
         return this.applySmoothingToResults(results, smoothingWindow);
+    }
+
+    calculateEventMap() {
+        if (!this.telemetryData.length) return null;
+        
+        const idealCurve = [];
+        const drivingTrajectory = [];
+        const understeerEvents = [];
+        const oversteerEvents = [];
+        
+        // Generate ideal racing curve (smoother, optimal line)
+        for (let i = 0; i < this.telemetryData.length; i++) {
+            const point = this.telemetryData[i];
+            const distance = point.Distance || i * 10;
+            const trackProgress = (distance % 2000) / 2000;
+            
+            // Ideal curve - wider radius turns, smoother transitions
+            const idealX = Math.cos(trackProgress * Math.PI * 4) * 120 + trackProgress * 400;
+            const idealY = Math.sin(trackProgress * Math.PI * 4) * 60 + 200;
+            idealCurve.push({ x: idealX, y: idealY });
+            
+            // Actual driving trajectory
+            let actualX, actualY;
+            if (point.X !== undefined && point.Y !== undefined) {
+                actualX = point.X;
+                actualY = point.Y;
+            } else {
+                // Generate based on telemetry data with setup influence
+                const setupInfluence = this.calculateSetupImpact();
+                const deviation = (setupInfluence.understeerImpact - setupInfluence.oversteerImpact) * 15;
+                actualX = idealX + deviation + Math.sin(i * 0.05) * 10;
+                actualY = idealY + deviation * 0.5 + Math.cos(i * 0.03) * 8;
+            }
+            drivingTrajectory.push({ x: actualX, y: actualY });
+            
+            // Calculate events based on stability analysis
+            const stability = this.analysisResults.stabilityAnalysis;
+            if (stability && stability[i]) {
+                const event = {
+                    x: actualX,
+                    y: actualY,
+                    severity: Math.abs(stability[i].gradient)
+                };
+                
+                if (stability[i].state === 'understeer') {
+                    understeerEvents.push(event);
+                } else if (stability[i].state === 'oversteer') {
+                    oversteerEvents.push(event);
+                }
+            }
+        }
+        
+        // Apply Ramer-Douglas-Peucker smoothing to trajectories
+        const smoothedIdealCurve = this.smoothTrajectory(idealCurve, 0.5);
+        const smoothedDrivingTrajectory = this.smoothTrajectory(drivingTrajectory, 0.3);
+        
+        return {
+            idealCurve: smoothedIdealCurve,
+            drivingTrajectory: smoothedDrivingTrajectory,
+            understeerEvents: understeerEvents.slice(0, 50), // Limit points for performance
+            oversteerEvents: oversteerEvents.slice(0, 50)
+        };
     }
 
     applySmoothingToResults(results, window) {
@@ -1004,9 +1276,9 @@ class ACCTelemetryAnalyzer {
     }
 
     classifyCorner(minSpeed) {
-        if (minSpeed <= this.cornerSpeedThresholds.slow_corner_max_speed) {
+        if (minSpeed <= 120) {
             return 'slow';
-        } else if (minSpeed >= this.cornerSpeedThresholds.fast_corner_min_speed) {
+        } else if (minSpeed >= 180) {
             return 'fast';
         } else {
             return 'medium';
@@ -1029,13 +1301,17 @@ class ACCTelemetryAnalyzer {
             needle.style.transform = `translateX(-50%) rotate(${balanceAngle}deg)`;
         }
         
-        // Update meters
-        const entryStability = Math.max(0, Math.min(100, 50 + (avgGradient * -30)));
-        const exitStability = Math.max(0, Math.min(100, 50 + (setupImpact.oversteerImpact * -50)));
+        // Count understeer and oversteer events
+        const understeerCount = stability.filter(s => s.state === 'understeer').length;
+        const oversteerCount = stability.filter(s => s.state === 'oversteer').length;
+        const totalEvents = stability.length;
+        
+        const understeerPercentage = (understeerCount / totalEvents) * 100;
+        const oversteerPercentage = (oversteerCount / totalEvents) * 100;
         const overallBalance = Math.max(0, Math.min(100, 50 + (avgGradient * -25)));
         
-        this.updateMeter('entryMeter', 'entryValue', entryStability);
-        this.updateMeter('exitMeter', 'exitValue', exitStability);
+        this.updateMeter('understeerMeter', 'understeerValue', understeerPercentage);
+        this.updateMeter('oversteerMeter', 'oversteerValue', oversteerPercentage);
         this.updateMeter('overallMeter', 'overallValue', overallBalance);
     }
 
@@ -1043,18 +1319,28 @@ class ACCTelemetryAnalyzer {
         const meter = document.getElementById(meterId);
         const value = document.getElementById(valueId);
         
-        if (meter) meter.style.width = `${percentage}%`;
+        if (meter) meter.style.width = `${Math.min(100, percentage)}%`;
         if (value) value.textContent = Math.round(percentage);
     }
 
     renderCharts() {
-        this.renderStabilityChart();
-        this.renderTrajectoryChart();
+        console.log('Rendering charts...');
+        try {
+            this.renderStabilityChart();
+            this.renderTrajectoryChart();
+            this.renderEventMapChart();
+            console.log('Charts rendered successfully');
+        } catch (error) {
+            console.error('Error rendering charts:', error);
+        }
     }
 
     renderStabilityChart() {
         const canvas = document.getElementById('stabilityChart');
-        if (!canvas) return;
+        if (!canvas) {
+            console.warn('Stability chart canvas not found');
+            return;
+        }
         
         const ctx = canvas.getContext('2d');
         
@@ -1062,13 +1348,16 @@ class ACCTelemetryAnalyzer {
             this.charts.stabilityChart.destroy();
         }
         
-        if (!this.analysisResults.stabilityAnalysis) return;
+        if (!this.analysisResults.stabilityAnalysis) {
+            console.warn('No stability analysis data available');
+            return;
+        }
         
         const data = this.analysisResults.stabilityAnalysis;
         const distances = data.map(d => d.distance);
         const gradients = data.map(d => d.gradient);
         
-        this.charts.stabilityChart = new Chart(ctx, {
+        const chartConfig = {
             type: 'line',
             data: {
                 labels: distances,
@@ -1136,12 +1425,33 @@ class ACCTelemetryAnalyzer {
                     }
                 }
             }
-        });
+        };
+        
+        // Add zoom plugin if available
+        if (typeof Chart !== 'undefined' && Chart.registry && Chart.registry.plugins.get('zoom')) {
+            chartConfig.options.plugins.zoom = {
+                zoom: {
+                    wheel: { enabled: true },
+                    pinch: { enabled: true },
+                    mode: 'x'
+                },
+                pan: {
+                    enabled: true,
+                    mode: 'x'
+                }
+            };
+        }
+        
+        this.charts.stabilityChart = new Chart(ctx, chartConfig);
+        console.log('Stability chart created');
     }
 
     renderTrajectoryChart() {
         const canvas = document.getElementById('trajectoryChart');
-        if (!canvas) return;
+        if (!canvas) {
+            console.warn('Trajectory chart canvas not found');
+            return;
+        }
         
         const ctx = canvas.getContext('2d');
         
@@ -1149,7 +1459,10 @@ class ACCTelemetryAnalyzer {
             this.charts.trajectoryChart.destroy();
         }
         
-        if (!this.analysisResults.trajectoryAnalysis) return;
+        if (!this.analysisResults.trajectoryAnalysis) {
+            console.warn('No trajectory analysis data available');
+            return;
+        }
         
         const trajectory = this.analysisResults.trajectoryAnalysis;
         const corners = this.analysisResults.cornerAnalysis || [];
@@ -1175,7 +1488,7 @@ class ACCTelemetryAnalyzer {
             }
         });
         
-        this.charts.trajectoryChart = new Chart(ctx, {
+        const chartConfig = {
             type: 'scatter',
             data: {
                 datasets: [
@@ -1263,7 +1576,165 @@ class ACCTelemetryAnalyzer {
                     }
                 }
             }
-        });
+        };
+        
+        // Add zoom plugin if available
+        if (typeof Chart !== 'undefined' && Chart.registry && Chart.registry.plugins.get('zoom')) {
+            chartConfig.options.plugins.zoom = {
+                zoom: {
+                    wheel: { enabled: true },
+                    pinch: { enabled: true },
+                    mode: 'xy'
+                },
+                pan: {
+                    enabled: true,
+                    mode: 'xy'
+                }
+            };
+        }
+        
+        this.charts.trajectoryChart = new Chart(ctx, chartConfig);
+        console.log('Trajectory chart created');
+    }
+
+    renderEventMapChart() {
+        const canvas = document.getElementById('eventMapChart');
+        if (!canvas) {
+            console.warn('Event map chart canvas not found');
+            return;
+        }
+        
+        const ctx = canvas.getContext('2d');
+        
+        if (this.charts.eventMapChart) {
+            this.charts.eventMapChart.destroy();
+        }
+        
+        if (!this.analysisResults.eventMap) {
+            console.warn('No event map data available');
+            return;
+        }
+        
+        const eventMap = this.analysisResults.eventMap;
+        
+        const chartConfig = {
+            type: 'scatter',
+            data: {
+                datasets: [
+                    {
+                        label: 'Ideal Racing Curve',
+                        data: eventMap.idealCurve,
+                        borderColor: '#5D878F',
+                        backgroundColor: 'rgba(93, 135, 143, 0.2)',
+                        borderWidth: 3,
+                        borderDash: [8, 4],
+                        showLine: true,
+                        pointRadius: 0,
+                        pointHoverRadius: 0,
+                        fill: false,
+                        tension: 0.2
+                    },
+                    {
+                        label: 'Driving Trajectory',
+                        data: eventMap.drivingTrajectory,
+                        borderColor: '#1FB8CD',
+                        backgroundColor: 'rgba(31, 184, 205, 0.2)',
+                        borderWidth: 2,
+                        showLine: true,
+                        pointRadius: 0,
+                        pointHoverRadius: 2,
+                        fill: false,
+                        tension: 0.1
+                    },
+                    {
+                        label: 'Understeer Events',
+                        data: eventMap.understeerEvents,
+                        backgroundColor: '#1FB8CD',
+                        borderColor: '#1FB8CD',
+                        pointRadius: function(context) {
+                            return Math.max(4, Math.min(12, (context.raw.severity || 0.5) * 20));
+                        },
+                        pointHoverRadius: function(context) {
+                            return Math.max(6, Math.min(15, (context.raw.severity || 0.5) * 25));
+                        },
+                        showLine: false,
+                        type: 'scatter'
+                    },
+                    {
+                        label: 'Oversteer Events',
+                        data: eventMap.oversteerEvents,
+                        backgroundColor: '#B4413C',
+                        borderColor: '#B4413C',
+                        pointRadius: function(context) {
+                            return Math.max(4, Math.min(12, (context.raw.severity || 0.5) * 20));
+                        },
+                        pointHoverRadius: function(context) {
+                            return Math.max(6, Math.min(15, (context.raw.severity || 0.5) * 25));
+                        },
+                        showLine: false,
+                        type: 'scatter'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: {
+                    duration: 500,
+                    easing: 'easeInOutQuart'
+                },
+                scales: {
+                    x: {
+                        type: 'linear',
+                        position: 'bottom',
+                        title: {
+                            display: true,
+                            text: 'Track Position X (m)'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Track Position Y (m)'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        filter: function(tooltipItem) {
+                            return tooltipItem.datasetIndex >= 2; // Only show for event points
+                        },
+                        callbacks: {
+                            label: function(context) {
+                                const severity = context.raw.severity || 0;
+                                return `${context.dataset.label}: Severity ${(severity * 100).toFixed(0)}%`;
+                            }
+                        }
+                    }
+                }
+            }
+        };
+        
+        // Add zoom plugin if available
+        if (typeof Chart !== 'undefined' && Chart.registry && Chart.registry.plugins.get('zoom')) {
+            chartConfig.options.plugins.zoom = {
+                zoom: {
+                    wheel: { enabled: true },
+                    pinch: { enabled: true },
+                    mode: 'xy'
+                },
+                pan: {
+                    enabled: true,
+                    mode: 'xy'
+                }
+            };
+        }
+        
+        this.charts.eventMapChart = new Chart(ctx, chartConfig);
+        console.log('Event map chart created');
     }
 
     generateRecommendations() {
@@ -1353,7 +1824,7 @@ class ACCTelemetryAnalyzer {
             }
         }
 
-        // Add more recommendations as needed...
+        // Add balanced setup recommendation if handling is good
         if (recommendations.length === 0) {
             recommendations.push({
                 icon: '✅',
@@ -1428,5 +1899,5 @@ class ACCTelemetryAnalyzer {
 // Initialize the application when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     console.log('DOM loaded, initializing ACC Telemetry Analyzer...');
-    new ACCTelemetryAnalyzer();
+    window.accAnalyzer = new ACCTelemetryAnalyzer();
 });
