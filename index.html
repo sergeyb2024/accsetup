@@ -5,19 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ACC Telemetry Analysis Tool</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div class="container">
-        <!-- Header -->
+        <!-- Header with Theme Toggle -->
         <header class="app-header">
             <div class="header-content">
-                <div>
+                <div class="header-text">
                     <h1>ACC Telemetry Analysis Tool</h1>
                     <p class="app-subtitle">Professional telemetry analysis for Assetto Corsa Competizione</p>
                 </div>
-                <button class="theme-toggle" id="themeToggle" title="Toggle dark/light theme">
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
                     <span class="theme-icon">🌙</span>
                 </button>
+            </div>
+            <div class="car-info hidden" id="carInfo">
+                <div class="car-name" id="carName"></div>
+                <div class="car-class" id="carClass"></div>
             </div>
         </header>
 
@@ -64,14 +69,70 @@
             </div>
         </section>
 
+        <!-- Stability Gauges Section -->
+        <section class="stability-gauges hidden" id="stabilityGauges">
+            <div class="card">
+                <div class="card__header">
+                    <h2>Real-Time Stability Analysis</h2>
+                    <p class="gauges-subtitle">Live car balance indicators</p>
+                </div>
+                <div class="card__body">
+                    <div class="gauges-grid">
+                        <div class="gauge-container">
+                            <div class="gauge" id="balanceGauge">
+                                <div class="gauge-needle" id="balanceNeedle"></div>
+                                <div class="gauge-labels">
+                                    <span class="gauge-label left">Understeer</span>
+                                    <span class="gauge-label right">Oversteer</span>
+                                </div>
+                            </div>
+                            <h4>Car Balance</h4>
+                        </div>
+                        
+                        <div class="stability-meters">
+                            <div class="meter-item">
+                                <label>Corner Entry</label>
+                                <div class="meter-bar">
+                                    <div class="meter-fill" id="entryMeter"></div>
+                                </div>
+                                <span class="meter-value" id="entryValue">75</span>
+                            </div>
+                            
+                            <div class="meter-item">
+                                <label>Corner Exit</label>
+                                <div class="meter-bar">
+                                    <div class="meter-fill" id="exitMeter"></div>
+                                </div>
+                                <span class="meter-value" id="exitValue">68</span>
+                            </div>
+                            
+                            <div class="meter-item">
+                                <label>Overall Balance</label>
+                                <div class="meter-bar">
+                                    <div class="meter-fill" id="overallMeter"></div>
+                                </div>
+                                <span class="meter-value" id="overallValue">72</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- Setup Controls Section -->
         <section class="setup-controls hidden" id="setupControls">
             <div class="card">
-                <div class="card__header">
-                    <h2>Car Setup Parameters</h2>
-                    <p class="setup-subtitle">Adjust parameters to analyze their impact on handling</p>
+                <div class="card__header collapsible" id="setupHeader">
+                    <div class="header-left">
+                        <h2>Car Setup Parameters</h2>
+                        <p class="setup-subtitle">Adjust parameters to analyze their impact on handling</p>
+                    </div>
+                    <button class="collapse-btn" id="setupCollapseBtn">
+                        <span class="collapse-icon">▼</span>
+                    </button>
                 </div>
-                <div class="card__body">
+                <div class="card__body collapsible-content" id="setupContent">
+                    <div class="setup-validation" id="setupValidation"></div>
                     <div class="setup-grid" id="setupSliders">
                         <!-- Dynamic sliders will be generated here -->
                     </div>
@@ -85,15 +146,14 @@
             <div class="charts-grid">
                 <div class="chart-card">
                     <h3>Stability Analysis</h3>
-                    <p class="chart-subtitle">Understeer/Oversteer events over track distance (smoothed)</p>
+                    <p class="chart-subtitle">Understeer/Oversteer events over track distance</p>
                     <div class="chart-container" style="position: relative; height: 400px;">
                         <canvas id="stabilityChart"></canvas>
-                        <div class="chart-tooltip" id="stabilityTooltip"></div>
                     </div>
                     <div class="chart-legend">
                         <div class="legend-item">
                             <div class="legend-chip understeer"></div>
-                            <span>Understeer</span>
+                            <span>Oversteer</span>
                         </div>
                         <div class="legend-item">
                             <div class="legend-chip neutral"></div>
@@ -101,17 +161,16 @@
                         </div>
                         <div class="legend-item">
                             <div class="legend-chip oversteer"></div>
-                            <span>Oversteer</span>
+                            <span>Understeer</span>
                         </div>
                     </div>
                 </div>
 
                 <div class="chart-card">
                     <h3>Trajectory Analysis</h3>
-                    <p class="chart-subtitle">Optimal racing line vs actual trajectory (smoothed)</p>
+                    <p class="chart-subtitle">Optimal racing line vs actual trajectory with corner analysis</p>
                     <div class="chart-container" style="position: relative; height: 400px;">
                         <canvas id="trajectoryChart"></canvas>
-                        <div class="chart-tooltip" id="trajectoryTooltip"></div>
                     </div>
                     <div class="chart-legend">
                         <div class="legend-item">
@@ -122,6 +181,14 @@
                             <div class="legend-line actual"></div>
                             <span>Actual Trajectory</span>
                         </div>
+                        <div class="legend-item">
+                            <div class="corner-speed slow"></div>
+                            <span>Slow Corner</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="corner-speed fast"></div>
+                            <span>Fast Corner</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -129,11 +196,22 @@
             <!-- Recommendations Panel -->
             <div class="recommendations-panel">
                 <div class="card">
-                    <div class="card__header">
-                        <h2>Setup Recommendations</h2>
-                        <p class="recommendations-subtitle">Actionable tuning suggestions with numeric targets</p>
+                    <div class="card__header collapsible" id="recommendationsHeader">
+                        <div class="header-left">
+                            <h2>Setup Recommendations</h2>
+                            <p class="recommendations-subtitle">Specific numeric suggestions with priority levels</p>
+                        </div>
+                        <button class="collapse-btn" id="recommendationsCollapseBtn">
+                            <span class="collapse-icon">▼</span>
+                        </button>
                     </div>
-                    <div class="card__body">
+                    <div class="card__body collapsible-content" id="recommendationsContent">
+                        <div class="recommendations-filters">
+                            <button class="filter-btn active" data-priority="all">All</button>
+                            <button class="filter-btn" data-priority="critical">🔧 Critical</button>
+                            <button class="filter-btn" data-priority="moderate">⚙️ Moderate</button>
+                            <button class="filter-btn" data-priority="minor">🔍 Minor</button>
+                        </div>
                         <div class="recommendations-grid" id="recommendationsList">
                             <!-- Recommendations will be generated here -->
                         </div>
@@ -148,14 +226,9 @@
                 <div class="spinner"></div>
                 <h3>Processing Telemetry Data...</h3>
                 <p id="loadingMessage">Initializing analysis...</p>
-            </div>
-        </div>
-
-        <!-- Toast notifications -->
-        <div class="toast hidden" id="toast">
-            <div class="toast-content">
-                <span class="toast-message" id="toastMessage"></span>
-                <button class="toast-close" id="toastClose">×</button>
+                <div class="loading-progress">
+                    <div class="loading-progress-bar" id="loadingProgressBar"></div>
+                </div>
             </div>
         </div>
     </div>
