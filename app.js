@@ -157,7 +157,11 @@ class ACCTelemetryApp {
             }
 
             // Calculate Understeer Angle (USOS)
-            const understeerAngle = p.STEERANGLE - (idealYawRate * wheelbase / speed_ms * 57.2958);
+            // CORRECTED: Added a guard to prevent division by zero at low speeds.
+            let understeerAngle = 0;
+            if (speed_ms > 1) { // Only calculate if moving
+                understeerAngle = p.STEERANGLE - (idealYawRate * wheelbase / speed_ms * 57.2958);
+            }
             
             // Alternative USOS from Yaw Rate
             const yawRateDeficit = idealYawRate - p.ROTY;
@@ -199,16 +203,28 @@ class ACCTelemetryApp {
         const oversteerCount = cornerPoints.filter(p => p.classification === 'oversteer').length;
         const neutralCount = totalCornerPoints - understeerCount - oversteerCount;
 
-        this.analysisResults = {
-            usosAverage: cornerPoints.reduce((sum, p) => sum + p.yawRateDeficit, 0) / totalCornerPoints || 0,
-            confidence: (totalCornerPoints / processed.length) * 100,
-            balanceDistribution: {
-                understeer: (understeerCount / totalCornerPoints) * 100 || 0,
-                oversteer: (oversteerCount / totalCornerPoints) * 100 || 0,
-                neutral: (neutralCount / totalCornerPoints) * 100 || 0,
-            },
-            suspensionAnalysis: this.analyzeSuspensionData(processed)
-        };
+        // CORRECTED: Handle case where there are no corner points to avoid division by zero.
+        if (totalCornerPoints > 0) {
+            this.analysisResults = {
+                usosAverage: cornerPoints.reduce((sum, p) => sum + p.yawRateDeficit, 0) / totalCornerPoints,
+                confidence: (totalCornerPoints / processed.length) * 100,
+                balanceDistribution: {
+                    understeer: (understeerCount / totalCornerPoints) * 100,
+                    oversteer: (oversteerCount / totalCornerPoints) * 100,
+                    neutral: (neutralCount / totalCornerPoints) * 100,
+                },
+                suspensionAnalysis: this.analyzeSuspensionData(processed)
+            };
+        } else {
+            // Default values if no corners are found
+            this.analysisResults = {
+                usosAverage: 0,
+                confidence: 0,
+                balanceDistribution: { understeer: 0, oversteer: 0, neutral: 100 },
+                suspensionAnalysis: this.analyzeSuspensionData(processed)
+            };
+            this.showStatus("No valid cornering data found to analyze balance.", "warning");
+        }
 
         console.log('Advanced analysis complete.');
         return processed;
