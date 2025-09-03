@@ -318,9 +318,8 @@ class ACCTelemetryApp {
                 if (this.telemetryData.length > 0) {
                     this.processData(); // Re-analyze with new setup
                 } else {
-                    // If no telemetry, still switch to the setup tab to show the new info
-                    this.switchToAnalysisTab();
-                    document.querySelector('.setup-tab-btn[data-tab="setupControls"]').click();
+                    // If no telemetry, switch to the analysis tab and then show the setup controls sub-tab.
+                    this.switchToAnalysisTab(true); 
                 }
                 
                 this.showStatus(`Setup loaded: ${setupData.carInfo.carName}`, 'success');
@@ -1273,13 +1272,24 @@ class ACCTelemetryApp {
         }
     }
 
-    switchToAnalysisTab() {
-        const analysisTab = document.querySelector('.tab-btn[data-tab="analysis"]');
-        if (analysisTab) {
-            analysisTab.click();
-        } else {
-            console.error('Could not find the analysis tab button to click.');
-        }
+    switchToAnalysisTab(showSetupControls = false) {
+        // DEFERRED EXECUTION: Use setTimeout to ensure the DOM is ready and selectable.
+        // This pushes the click event to the end of the browser's execution queue.
+        setTimeout(() => {
+            const analysisTab = document.querySelector('.tab-btn[data-tab="analysis"]');
+            if (analysisTab) {
+                analysisTab.click();
+                // If requested, also switch to the setup controls sub-tab.
+                if (showSetupControls) {
+                    const setupControlsTab = document.querySelector('.setup-tab-btn[data-tab="setupControls"]');
+                    if (setupControlsTab) {
+                        setupControlsTab.click();
+                    }
+                }
+            } else {
+                console.error('Could not find the analysis tab button to click, even after a delay.');
+            }
+        }, 0);
     }
 
     setupTabNavigation() {
