@@ -119,10 +119,20 @@ class ACCTelemetryApp {
             return;
         }
 
+        // MODIFIED: Make setup file optional. Use defaults if not loaded.
         if (!this.currentSetupData) {
-            this.showStatus('Please load a setup file before processing telemetry.', 'error');
-            return;
+            this.showStatus('No setup file loaded. Using default car parameters for analysis.', 'warning');
+            this.currentSetupData = {
+                carInfo: {
+                    carName: 'Default Car',
+                    wheelbase: 2.650 // Use a common GT3 wheelbase as a default
+                },
+                currentSetup: { brakeBias: 55.0 }, // Default for recommendations
+                alignment: {},
+                rawSetup: {}
+            };
         }
+
         if (this.telemetryData.length === 0) {
             this.showStatus('Please load a telemetry file before processing.', 'error');
             return;
@@ -1279,9 +1289,11 @@ class ACCTelemetryApp {
             const primaryIssue = dist.understeer > 40 ? 'significant understeer' : 
                                dist.oversteer > 30 ? 'significant oversteer' : 'a generally balanced behavior';
             
+            const carName = this.currentSetupData.carInfo.carName || 'the vehicle';
+
             summary.innerHTML = `
                 <h4>Executive Summary</h4>
-                <p>Analysis for ${this.currentSetupData.carInfo.carName} reveals ${primaryIssue}.</p>
+                <p>Analysis for ${carName} reveals ${primaryIssue}.</p>
                 <p>Balance: ${dist.understeer.toFixed(1)}% understeer, ${dist.oversteer.toFixed(1)}% oversteer.</p>
                 <p>Avg USOS Factor: ${this.analysisResults.usosAverage.toFixed(2)}°</p>
             `;
