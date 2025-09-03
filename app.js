@@ -140,6 +140,80 @@ class ACCTelemetryApp {
         document.querySelector('.tab-btn[data-tab="analysis"]').click();
     }
 
+    performAdvancedAnalysis() {
+        console.log('Performing advanced telemetry analysis...');
+        if (!this.telemetryData || this.telemetryData.length === 0) return [];
+
+        const wheelbase = this.currentSetupData.carInfo.wheelbase;
+        const g = 9.81; // Gravity constant
+
+        const processed = this.telemetryData.map(p => {
+            const speed_ms = p.SPEED / 3.6;
+            
+            // Calculate Ideal Yaw Rate from G_LAT for accuracy
+            let idealYawRate = 0;
+            if (speed_ms > 5) {
+                idealYawRate = (p.G_LAT * g / speed_ms) * (180 / Math.PI); // in deg/s
+            }
+
+            // Calculate Understeer Angle (USOS)
+            const understeerAngle = p.STEERANGLE - (idealYawRate * wheelbase / speed_ms * 57.2958);
+            
+            // Alternative USOS from Yaw Rate
+            const yawRateDeficit = idealYawRate - p.ROTY;
+            
+            const isCorner = Math.abs(p.G_LAT) > this.analysisThresholds.minLateralG && p.SPEED > this.analysisThresholds.minSpeed;
+            
+            let classification = 'neutral';
+            if (isCorner) {
+                if (yawRateDeficit > this.analysisThresholds.yawDeficitThreshold) {
+                    classification = 'understeer';
+                } else if (yawRateDeficit < -this.analysisThresholds.yawDeficitThreshold) {
+                    classification = 'oversteer';
+                }
+            }
+
+            // Fallback to INVERSE_CORNER_RADIUS if available (more robust)
+            let icr = 0;
+            if (p.INVERSE_CORNER_RADIUS !== undefined) {
+                icr = p.INVERSE_CORNER_RADIUS;
+            } else if (p.CORNER_RADIUS !== undefined && p.CORNER_RADIUS > 0) {
+                icr = 1 / p.CORNER_RADIUS;
+            }
+
+            return {
+                ...p,
+                idealYawRate,
+                understeerAngle,
+                yawRateDeficit,
+                isCorner,
+                classification,
+                INVERSE_CORNER_RADIUS: icr
+            };
+        });
+
+        const cornerPoints = processed.filter(p => p.isCorner);
+        const totalCornerPoints = cornerPoints.length;
+
+        const understeerCount = cornerPoints.filter(p => p.classification === 'understeer').length;
+        const oversteerCount = cornerPoints.filter(p => p.classification === 'oversteer').length;
+        const neutralCount = totalCornerPoints - understeerCount - oversteerCount;
+
+        this.analysisResults = {
+            usosAverage: cornerPoints.reduce((sum, p) => sum + p.yawRateDeficit, 0) / totalCornerPoints || 0,
+            confidence: (totalCornerPoints / processed.length) * 100,
+            balanceDistribution: {
+                understeer: (understeerCount / totalCornerPoints) * 100 || 0,
+                oversteer: (oversteerCount / totalCornerPoints) * 100 || 0,
+                neutral: (neutralCount / totalCornerPoints) * 100 || 0,
+            },
+            suspensionAnalysis: this.analyzeSuspensionData(processed)
+        };
+
+        console.log('Advanced analysis complete.');
+        return processed;
+    }
+
     preProcessTelemetry() {
         console.log('Pre-processing telemetry for sign conventions...');
         if (this.telemetryData.length < 100) return; // Not enough data to be sure
