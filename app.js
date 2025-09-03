@@ -144,12 +144,7 @@ class ACCTelemetryApp {
             this.showStatus('Failed to display all analysis results. Check console for details.', 'error');
         } finally {
             // CORRECTED: Ensure the tab switch happens even if an error occurs during display.
-            const analysisTab = document.querySelector('.tab-btn[data-tab="analysis"]');
-            if (analysisTab) {
-                analysisTab.click();
-            } else {
-                console.error('Could not find the analysis tab button to click.');
-            }
+            this.switchToAnalysisTab();
         }
     }
 
@@ -322,6 +317,10 @@ class ACCTelemetryApp {
                 // Re-analyze telemetry if already loaded
                 if (this.telemetryData.length > 0) {
                     this.processData(); // Re-analyze with new setup
+                } else {
+                    // If no telemetry, still switch to the setup tab to show the new info
+                    this.switchToAnalysisTab();
+                    document.querySelector('.setup-tab-btn[data-tab="setupControls"]').click();
                 }
                 
                 this.showStatus(`Setup loaded: ${setupData.carInfo.carName}`, 'success');
@@ -1271,6 +1270,15 @@ class ACCTelemetryApp {
                 <p>Balance: ${dist.understeer.toFixed(1)}% understeer, ${dist.oversteer.toFixed(1)}% oversteer.</p>
                 <p>Avg USOS Factor: ${this.analysisResults.usosAverage.toFixed(2)}°</p>
             `;
+        }
+    }
+
+    switchToAnalysisTab() {
+        const analysisTab = document.querySelector('.tab-btn[data-tab="analysis"]');
+        if (analysisTab) {
+            analysisTab.click();
+        } else {
+            console.error('Could not find the analysis tab button to click.');
         }
     }
 
