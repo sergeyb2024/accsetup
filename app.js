@@ -6,6 +6,7 @@ class ACCTelemetryApp {
         this.processedData = null;
         this.charts = {};
         this.analysisResults = {};
+        this.isReady = false; // ADDED: State to track application readiness
         
         // CORRECTED: Analysis thresholds now reflect the YAW-RATE based USOS calculation.
         this.analysisThresholds = {
@@ -56,6 +57,7 @@ class ACCTelemetryApp {
         this.setupSetupFileUpload();
         this.setupSetupControls(); // IMPLEMENTED
         console.log('App initialized with JSON setup upload functionality');
+        this.isReady = true; // ADDED: Signal that the application is fully ready
     }
 
     setupEventListeners() {
@@ -110,6 +112,13 @@ class ACCTelemetryApp {
     }
 
     processData() {
+        // ADDED: Guard to ensure the app is ready before processing
+        if (!this.isReady) {
+            console.warn('processData called before app was ready. Retrying...');
+            setTimeout(() => this.processData(), 100);
+            return;
+        }
+
         if (!this.currentSetupData) {
             this.showStatus('Please load a setup file before processing telemetry.', 'error');
             return;
@@ -299,6 +308,13 @@ class ACCTelemetryApp {
     }
 
     processSetupFile(file) {
+        // ADDED: Guard to ensure the app is ready before processing
+        if (!this.isReady) {
+            console.warn('processSetupFile called before app was ready. Retrying...');
+            setTimeout(() => this.processSetupFile(file), 100);
+            return;
+        }
+
         console.log('Processing setup file:', file.name);
         
         if (!file.name.endsWith('.json')) {
