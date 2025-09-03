@@ -7,12 +7,12 @@ class ACCTelemetryApp {
         this.charts = {};
         this.analysisResults = {};
         
-        // Analysis thresholds for understeer/oversteer detection
+        // CORRECTED: Analysis thresholds now reflect the inverted USOS calculation logic.
         this.analysisThresholds = {
-            understeer: 2.0,    // Positive USOS = understeer (need more steering)
-            oversteer: -1.0,    // Negative USOS = oversteer (need less steering)
+            oversteer: 1.0,     // Positive USOS = oversteer (need LESS steering than ideal)
+            understeer: -2.0,   // Negative USOS = understeer (need MORE steering than ideal)
             minLateralG: 0.3,
-            minSpeed: 50, // CRITICAL: This threshold is in km/h
+            minSpeed: 50, // This is in km/h
             wheelSlipThreshold: 0.15,
             yawDeficitThreshold: 5.0
         };
@@ -21,18 +21,15 @@ class ACCTelemetryApp {
         this.recommendationGroups = {
             conservative: {
                 name: "Conservative Approach",
-                description: "Small incremental changes (±1-2 clicks). Focus on electronic aids first.",
-                changeMagnitude: {small: 1, medium: 2, large: 2}
+                description: "Small incremental changes (±1-2 clicks). Focus on electronic aids first."
             },
             mechanical: {
                 name: "Mechanical Approach", 
-                description: "Medium changes (±3-5 clicks). Focus on suspension, ARBs, springs.",
-                changeMagnitude: {small: 2, medium: 4, large: 5}
+                description: "Medium changes (±3-5 clicks). Focus on suspension, ARBs, springs."
             },
             aerodynamic: {
                 name: "Aerodynamic Approach",
-                description: "Larger changes (±2-4 clicks). Focus on aero balance, ride height.",
-                changeMagnitude: {small: 2, medium: 3, large: 4}
+                description: "Larger changes (±2-4 clicks). Focus on aero balance, ride height."
             }
         };
 
@@ -43,9 +40,7 @@ class ACCTelemetryApp {
         console.log('Initializing ACC Telemetry App with JSON setup upload...');
         try {
             if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', () => {
-                    this.setupApplication();
-                });
+                document.addEventListener('DOMContentLoaded', () => this.setupApplication());
             } else {
                 this.setupApplication();
             }
@@ -79,27 +74,19 @@ class ACCTelemetryApp {
         // Load sample data button
         const loadSampleBtn = document.getElementById('loadSampleBtn');
         if (loadSampleBtn) {
-            console.log('Setting up load sample button event listener...');
             loadSampleBtn.addEventListener('click', (e) => {
                 e.preventDefault();
-                console.log('Load sample button clicked!');
                 this.loadSampleData();
             });
-        } else {
-            console.error('Load sample button not found!');
         }
 
         // Process data button
         const processDataBtn = document.getElementById('processDataBtn');
         if (processDataBtn) {
-            console.log('Setting up process data button event listener...');
             processDataBtn.addEventListener('click', (e) => {
                 e.preventDefault();
-                console.log('Process data button clicked!');
                 this.processData();
             });
-        } else {
-            console.error('Process data button not found!');
         }
 
         // Setup control buttons
@@ -192,7 +179,6 @@ class ACCTelemetryApp {
     }
 
     parseSetupJSON(jsonContent) {
-        console.log('Parsing ACC setup JSON...');
         try {
             const setup = JSON.parse(jsonContent);
             
@@ -244,15 +230,7 @@ class ACCTelemetryApp {
                 rideHeightRear: (setup.advancedSetup.aeroBalance.rideHeight[2] + setup.advancedSetup.aeroBalance.rideHeight[3]) / 2,
                 splitter: setup.advancedSetup.aeroBalance.splitter,
                 rearWing: setup.advancedSetup.aeroBalance.rearWing,
-                
-                // Dampers
-                bumpSlowFL: setup.advancedSetup.dampers.bumpSlow[0],
-                bumpSlowFR: setup.advancedSetup.dampers.bumpSlow[1],
-                bumpSlowRL: setup.advancedSetup.dampers.bumpSlow[2],
-                bumpSlowRR: setup.advancedSetup.dampers.bumpSlow[3]
             };
-            
-            console.log('Setup JSON parsed successfully:', carInfo.carName);
             
             return {
                 carInfo,
@@ -410,10 +388,6 @@ class ACCTelemetryApp {
                 SUSP_TRAVEL_RF: this.generateSuspensionTravel('RF', lapProgress, cornerPhase),
                 SUSP_TRAVEL_LR: this.generateSuspensionTravel('LR', lapProgress, cornerPhase),
                 SUSP_TRAVEL_RR: this.generateSuspensionTravel('RR', lapProgress, cornerPhase),
-                SUSP_VEL_LF: this.generateSuspensionVelocity('LF', lapProgress, cornerPhase),
-                SUSP_VEL_RF: this.generateSuspensionVelocity('RF', lapProgress, cornerPhase),
-                SUSP_VEL_LR: this.generateSuspensionVelocity('LR', lapProgress, cornerPhase),
-                SUSP_VEL_RR: this.generateSuspensionVelocity('RR', lapProgress, cornerPhase)
             };
             this.telemetryData.push(dataPoint);
         }
@@ -425,7 +399,6 @@ class ACCTelemetryApp {
         const processBtn = document.getElementById('processDataBtn');
         if (processBtn) {
             processBtn.classList.remove('hidden');
-            console.log('Process button shown');
         }
         
         this.showStatus(`Sample telemetry data loaded: ${this.telemetryData.length} data points`, 'success');
@@ -463,10 +436,10 @@ class ACCTelemetryApp {
         
         // Create varied scenarios for understeer/oversteer detection
         if (cornerPhase.corner && cornerPhase.corner.direction === -1 && cornerPhase.intensity > 0.7) {
-            baseSteer *= 0.7; // Less steering needed (oversteer scenario)
+            baseSteer *= 1.3; // More steering needed (understeer scenario)
         }
         if (cornerPhase.corner && cornerPhase.corner.direction === 1 && cornerPhase.intensity > 0.6) {
-            baseSteer *= 1.3; // More steering needed (understeer scenario)
+            baseSteer *= 0.7; // Less steering needed (oversteer scenario)
         }
         
         return baseSteer + (Math.random() - 0.5) * 3;
@@ -533,7 +506,7 @@ class ACCTelemetryApp {
 
     validateTelemetryData(headers) {
         console.log('Validating telemetry data channels...');
-        const required = ['SPEED', 'STEERANGLE', 'G_LAT', 'ROTY', 'THROTTLE', 'BRAKE'];
+        const required = ['SPEED', 'STEERANGLE', 'G_LAT', 'ROTY'];
         const optional = ['WHEEL_SPEED_LF', 'WHEEL_SPEED_RF', 'WHEEL_SPEED_LR', 'WHEEL_SPEED_RR',
                          'SUSP_TRAVEL_LF', 'SUSP_TRAVEL_RF', 'SUSP_TRAVEL_LR', 'SUSP_TRAVEL_RR'];
         
@@ -546,11 +519,9 @@ class ACCTelemetryApp {
         }
         
         let html = '';
-        let allValid = true;
 
         required.forEach(channel => {
             const isValid = headers.includes(channel);
-            if (!isValid) allValid = false;
             
             html += `
                 <div class="validation-item ${isValid ? 'valid' : 'invalid'}">
@@ -594,20 +565,19 @@ class ACCTelemetryApp {
                 console.log('No setup JSON loaded, creating default setup data...');
                 this.currentSetupData = {
                     carInfo: {
-                        carName: 'Mercedes AMG GT2 (Default)',
-                        wheelbase: 2.630
+                        carName: 'Default Car',
+                        wheelbase: 2.650
                     },
                     alignment: {
-                        camberFL: -3.7, camberFR: -3.7, camberRL: -3.6, camberRR: -3.6,
-                        toeFL: -0.05, toeFR: -0.05, toeRL: 0.04, toeRR: 0.04,
-                        casterLF: 21, casterRF: 21
+                        camberFL: -3.5, camberFR: -3.5, camberRL: -2.5, camberRR: -2.5,
+                        toeFL: 0, toeFR: 0, toeRL: 0.2, toeRR: 0.2,
+                        casterLF: 8, casterRF: 8
                     },
                     currentSetup: {
-                        pressureFL: 30, pressureFR: 30, pressureRL: 45, pressureRR: 45,
-                        tc1: 6, tc2: 0, abs: 6,
-                        arbFront: 1, arbRear: 1, brakeBias: 0,
-                        rideHeightFront: 5.5, rideHeightRear: 13,
-                        splitter: 0, rearWing: 4
+                        pressureFL: 27.5,
+                        tc1: 3, tc2: 3, abs: 5,
+                        arbFront: 5, arbRear: 3, brakeBias: 55,
+                        splitter: 1, rearWing: 5
                     }
                 };
                 this.displaySetupInfo(this.currentSetupData);
@@ -625,7 +595,6 @@ class ACCTelemetryApp {
                 const section = document.getElementById(sectionId);
                 if (section) {
                     section.classList.remove('hidden');
-                    console.log('Showing section:', sectionId);
                 }
             });
 
@@ -646,56 +615,45 @@ class ACCTelemetryApp {
 
     // USOS calculation using actual alignment values from JSON
     calculateUSOS(data, wheelbase) {
-        console.log('Calculating USOS with actual alignment values...');
         const usosValues = [];
         
         for (let i = 0; i < data.length; i++) {
-            const speed = data[i].SPEED * 0.277778; // km/h to m/s
-            const lateralG = data[i].G_LAT;
-            const steerAngle = data[i].STEERANGLE;
+            const { G_LAT: lateralG, STEERANGLE: steerAngle, SPEED: speedKmh } = data[i];
             
-            // CRITICAL FIX: Compare original speed in km/h to the threshold
-            if (Math.abs(lateralG) > this.analysisThresholds.minLateralG && data[i].SPEED > this.analysisThresholds.minSpeed) {
-                // Calculate turn radius from lateral acceleration
-                const radius = (speed * speed) / (Math.abs(lateralG) * 9.81);
-                
-                // Kinematic steering angle (neutral steer) - convert from radians to degrees
+            if (Math.abs(lateralG) > this.analysisThresholds.minLateralG && speedKmh > this.analysisThresholds.minSpeed) {
+                const speedMps = speedKmh * 0.277778;
+                const radius = (speedMps * speedMps) / (Math.abs(lateralG) * 9.81);
                 const kinematicSteer = (wheelbase / radius) * 57.2958;
                 
-                // USOS = actual steering - neutral steering
-                // Positive USOS = Understeer (need MORE steering than neutral)
-                // Negative USOS = Oversteer (need LESS steering than neutral)  
-                const usos = Math.abs(steerAngle) - kinematicSteer;
-                
-                // Preserve the SIGN to detect oversteer vs understeer
+                // LOGIC INVERTED AND CORRECTED: Ideal - Actual.
+                // Negative result = UNDERSTEER (Actual > Ideal)
+                // Positive result = OVERSTEER (Actual < Ideal)
+                const usos = kinematicSteer - Math.abs(steerAngle);
                 const signedUSOS = usos * Math.sign(lateralG * steerAngle);
                 
                 let classification = 'neutral';
-                if (signedUSOS > this.analysisThresholds.understeer) {
+                // CORRECTED: Classification logic now matches the inverted formula and new thresholds.
+                if (signedUSOS < this.analysisThresholds.understeer) { // e.g., < -2.0
                     classification = 'understeer';
-                } else if (signedUSOS < this.analysisThresholds.oversteer) {
+                } else if (signedUSOS > this.analysisThresholds.oversteer) { // e.g., > 1.0
                     classification = 'oversteer';
                 }
                 
                 usosValues.push({
                     usos: signedUSOS,
-                    lateralG: lateralG,
-                    speed: speed,
                     classification: classification
                 });
             } else {
-                usosValues.push({usos: 0, lateralG: 0, speed: 0, classification: 'straight'});
+                usosValues.push({usos: 0, classification: 'straight'});
             }
         }
         
-        console.log('USOS calculation complete');
         return usosValues;
     }
 
     performAdvancedAnalysis() {
         console.log('Performing advanced analysis...');
         const wheelbase = this.currentSetupData.carInfo.wheelbase;
-        const processed = [];
 
         // Calculate USOS using actual wheelbase from setup
         const usosValues = this.calculateUSOS(this.telemetryData, wheelbase);
@@ -704,16 +662,12 @@ class ACCTelemetryApp {
         const suspensionAnalysis = this.analyzeSuspensionData(this.telemetryData);
         
         // Combine all analysis
-        for (let i = 0; i < this.telemetryData.length; i++) {
-            const point = this.telemetryData[i];
-            processed.push({
-                ...point,
-                usosData: usosValues[i],
-                understeerAngle: usosValues[i].usos,
-                classification: usosValues[i].classification,
-                isCorner: Math.abs(point.G_LAT) > 0.5 && point.SPEED > this.analysisThresholds.minSpeed
-            });
-        }
+        const processed = this.telemetryData.map((point, i) => ({
+            ...point,
+            understeerAngle: usosValues[i].usos,
+            classification: usosValues[i].classification,
+            isCorner: Math.abs(point.G_LAT) > 0.5 && point.SPEED > this.analysisThresholds.minSpeed
+        }));
 
         // Calculate overall metrics
         const cornerData = processed.filter(p => p.isCorner);
@@ -722,17 +676,16 @@ class ACCTelemetryApp {
         const neutralCount = cornerData.filter(p => p.classification === 'neutral').length;
 
         this.analysisResults = {
-            usosAverage: usosValues.reduce((sum, val) => sum + val.usos, 0) / usosValues.length,
+            usosAverage: cornerData.reduce((sum, val) => sum + val.understeerAngle, 0) / (cornerData.length || 1),
             balanceDistribution: {
                 understeer: cornerData.length > 0 ? (understeerCount / cornerData.length) * 100 : 0,
                 oversteer: cornerData.length > 0 ? (oversteerCount / cornerData.length) * 100 : 0,
                 neutral: cornerData.length > 0 ? (neutralCount / cornerData.length) * 100 : 0
             },
             suspensionAnalysis: suspensionAnalysis,
-            confidence: Math.min(100, (cornerData.length / 50) * 100),
+            confidence: Math.min(100, (cornerData.length / 500) * 100),
             processed: processed,
             totalCorners: cornerData.length,
-            cornerData: cornerData
         };
 
         console.log('Analysis complete');
@@ -740,42 +693,17 @@ class ACCTelemetryApp {
     }
 
     analyzeSuspensionData(data) {
-        console.log('Analyzing suspension data...');
-        const suspAnalysis = {
-            frontTravel: [],
-            rearTravel: [],
-            bumpstopHits: {front: 0, rear: 0},
-            rideHeightIssues: false,
-            suspensionVelocity: {front: [], rear: []}
-        };
-        
-        for (let i = 0; i < data.length; i++) {
-            const point = data[i];
-            
-            const frontTravelLF = point.SUSP_TRAVEL_LF || 0;
-            const frontTravelRF = point.SUSP_TRAVEL_RF || 0;
-            const rearTravelLR = point.SUSP_TRAVEL_LR || 0;
-            const rearTravelRR = point.SUSP_TRAVEL_RR || 0;
-            
-            const frontTravel = (frontTravelLF + frontTravelRF) / 2;
-            const rearTravel = (rearTravelLR + rearTravelRR) / 2;
-            
-            suspAnalysis.frontTravel.push(frontTravel);
-            suspAnalysis.rearTravel.push(rearTravel);
-            
-            // Detect bumpstop hits
-            if (frontTravel > 90) suspAnalysis.bumpstopHits.front++;
-            if (rearTravel > 90) suspAnalysis.bumpstopHits.rear++;
-        }
-        
-        const avgFrontTravel = suspAnalysis.frontTravel.reduce((a, b) => a + b, 0) / suspAnalysis.frontTravel.length;
-        const avgRearTravel = suspAnalysis.rearTravel.reduce((a, b) => a + b, 0) / suspAnalysis.rearTravel.length;
-        
-        suspAnalysis.rideHeightIssues = avgFrontTravel > 80 || avgRearTravel > 80;
-        suspAnalysis.avgFrontTravel = avgFrontTravel;
-        suspAnalysis.avgRearTravel = avgRearTravel;
-        
-        return suspAnalysis;
+        const susp = { frontTravel: [], rearTravel: [], bumpstopHits: { front: 0, rear: 0 } };
+        data.forEach(p => {
+            const fT = ((p.SUSP_TRAVEL_LF || 0) + (p.SUSP_TRAVEL_RF || 0)) / 2;
+            const rT = ((p.SUSP_TRAVEL_LR || 0) + (p.SUSP_TRAVEL_RR || 0)) / 2;
+            susp.frontTravel.push(fT); susp.rearTravel.push(rT);
+            if (fT > 90) susp.bumpstopHits.front++; if (rT > 90) susp.bumpstopHits.rear++;
+        });
+        const avgF = susp.frontTravel.reduce((a, b) => a + b, 0) / (susp.frontTravel.length || 1);
+        const avgR = susp.rearTravel.reduce((a, b) => a + b, 0) / (susp.rearTravel.length || 1);
+        susp.rideHeightIssues = avgF > 80 || avgR > 80; susp.avgFrontTravel = avgF; susp.avgRearTravel = avgR;
+        return susp;
     }
 
     displayAnalysisResults() {
@@ -792,43 +720,22 @@ class ACCTelemetryApp {
             this.updateSuspensionMetrics();
             this.updateBalanceBreakdown();
             
-            console.log('All analysis results displayed successfully');
-            
         } catch (error) {
             console.error('Error displaying analysis results:', error);
-            this.showStatus('Error displaying results: ' + error.message, 'error');
         }
     }
 
     updateMetricValues() {
         if (!this.analysisResults) return;
 
-        const usosValue = document.getElementById('usosValue');
-        if (usosValue) usosValue.textContent = this.analysisResults.usosAverage.toFixed(2);
-
-        const usosConfidence = document.getElementById('usosConfidence');
-        if (usosConfidence) usosConfidence.textContent = this.analysisResults.confidence.toFixed(0);
-
-        const balanceDistribution = document.getElementById('balanceDistribution');
-        if (balanceDistribution) {
-            const dist = this.analysisResults.balanceDistribution;
-            balanceDistribution.textContent = `${dist.understeer.toFixed(0)}/${dist.neutral.toFixed(0)}/${dist.oversteer.toFixed(0)}`;
+        const { usosAverage, confidence, balanceDistribution, suspensionAnalysis } = this.analysisResults;
+        document.getElementById('usosValue').textContent = usosAverage.toFixed(2);
+        document.getElementById('usosConfidence').textContent = confidence.toFixed(0);
+        document.getElementById('balanceDistribution').textContent = `${balanceDistribution.understeer.toFixed(0)}/${balanceDistribution.neutral.toFixed(0)}/${balanceDistribution.oversteer.toFixed(0)}`;
+        if (suspensionAnalysis) {
+            document.getElementById('suspensionTravel').textContent = `${suspensionAnalysis.avgFrontTravel.toFixed(1)}/${suspensionAnalysis.avgRearTravel.toFixed(1)}`;
+            document.getElementById('bumpstopHits').textContent = `${suspensionAnalysis.bumpstopHits.front}/${suspensionAnalysis.bumpstopHits.rear}`;
         }
-
-        const suspensionTravel = document.getElementById('suspensionTravel');
-        if (suspensionTravel && this.analysisResults.suspensionAnalysis) {
-            const susp = this.analysisResults.suspensionAnalysis;
-            suspensionTravel.textContent = `${susp.avgFrontTravel.toFixed(1)}/${susp.avgRearTravel.toFixed(1)}`;
-        }
-
-        const bumpstopHits = document.getElementById('bumpstopHits');
-        if (bumpstopHits && this.analysisResults.suspensionAnalysis) {
-            const hits = this.analysisResults.suspensionAnalysis.bumpstopHits;
-            bumpstopHits.textContent = `${hits.front}/${hits.rear}`;
-        }
-
-        const wheelSlipAnalysis = document.getElementById('wheelSlipAnalysis');
-        if (wheelSlipAnalysis) wheelSlipAnalysis.textContent = 'Available';
     }
 
     updateSuspensionMetrics() {
@@ -836,23 +743,12 @@ class ACCTelemetryApp {
 
         const susp = this.analysisResults.suspensionAnalysis;
         
-        const frontAvgTravel = document.getElementById('frontAvgTravel');
-        if (frontAvgTravel) frontAvgTravel.textContent = `${susp.avgFrontTravel.toFixed(1)}%`;
-
-        const rearAvgTravel = document.getElementById('rearAvgTravel');
-        if (rearAvgTravel) rearAvgTravel.textContent = `${susp.avgRearTravel.toFixed(1)}%`;
-
-        const bumpstopCount = document.getElementById('bumpstopCount');
-        if (bumpstopCount) {
-            const total = susp.bumpstopHits.front + susp.bumpstopHits.rear;
-            bumpstopCount.textContent = total;
-        }
-
-        const rideHeightStatus = document.getElementById('rideHeightStatus');
-        if (rideHeightStatus) {
-            rideHeightStatus.textContent = susp.rideHeightIssues ? 'Issues Detected' : 'Optimal';
-            rideHeightStatus.className = `susp-value ${susp.rideHeightIssues ? 'text-warning' : 'text-success'}`;
-        }
+        document.getElementById('frontAvgTravel').textContent = `${susp.avgFrontTravel.toFixed(1)}%`;
+        document.getElementById('rearAvgTravel').textContent = `${susp.avgRearTravel.toFixed(1)}%`;
+        document.getElementById('bumpstopCount').textContent = susp.bumpstopHits.front + susp.bumpstopHits.rear;
+        const statusEl = document.getElementById('rideHeightStatus');
+        statusEl.textContent = susp.rideHeightIssues ? 'Issues Detected' : 'Optimal';
+        statusEl.className = `susp-value ${susp.rideHeightIssues ? 'text-warning' : 'text-success'}`;
     }
 
     updateBalanceBreakdown() {
@@ -860,14 +756,9 @@ class ACCTelemetryApp {
 
         const dist = this.analysisResults.balanceDistribution;
         
-        const understeerPercent = document.getElementById('understeerPercent');
-        if (understeerPercent) understeerPercent.textContent = `${dist.understeer.toFixed(1)}%`;
-
-        const neutralPercent = document.getElementById('neutralPercent');
-        if (neutralPercent) neutralPercent.textContent = `${dist.neutral.toFixed(1)}%`;
-
-        const oversteerPercent = document.getElementById('oversteerPercent');
-        if (oversteerPercent) oversteerPercent.textContent = `${dist.oversteer.toFixed(1)}%`;
+        document.getElementById('understeerPercent').textContent = `${dist.understeer.toFixed(1)}%`;
+        document.getElementById('neutralPercent').textContent = `${dist.neutral.toFixed(1)}%`;
+        document.getElementById('oversteerPercent').textContent = `${dist.oversteer.toFixed(1)}%`;
     }
 
     createAdvancedCharts() {
@@ -885,39 +776,28 @@ class ACCTelemetryApp {
         const canvas = document.getElementById('usosChart');
         if (!canvas || !this.processedData) return;
         
-        const ctx = canvas.getContext('2d');
         if (this.charts.usos) this.charts.usos.destroy();
 
         const cornerData = this.processedData.filter(p => p.isCorner);
         
-        const understeerData = cornerData.filter(p => p.classification === 'understeer');
-        const oversteerData = cornerData.filter(p => p.classification === 'oversteer');
-        const neutralData = cornerData.filter(p => p.classification === 'neutral');
-        
-        this.charts.usos = new Chart(ctx, {
+        this.charts.usos = new Chart(canvas.getContext('2d'), {
             type: 'scatter',
             data: {
                 datasets: [
                     {
                         label: 'Understeer',
-                        data: understeerData.map(p => ({x: Math.abs(p.G_LAT), y: p.understeerAngle})),
-                        backgroundColor: '#B4413C',
-                        borderColor: '#B4413C',
-                        pointRadius: 4
+                        data: cornerData.filter(p => p.classification === 'understeer').map(p => ({x: Math.abs(p.G_LAT), y: p.understeerAngle})),
+                        backgroundColor: '#B4413C'
                     },
                     {
                         label: 'Oversteer', 
-                        data: oversteerData.map(p => ({x: Math.abs(p.G_LAT), y: p.understeerAngle})),
-                        backgroundColor: '#FFC185',
-                        borderColor: '#FFC185',
-                        pointRadius: 4
+                        data: cornerData.filter(p => p.classification === 'oversteer').map(p => ({x: Math.abs(p.G_LAT), y: p.understeerAngle})),
+                        backgroundColor: '#FFC185'
                     },
                     {
                         label: 'Neutral',
-                        data: neutralData.map(p => ({x: Math.abs(p.G_LAT), y: p.understeerAngle})),
-                        backgroundColor: '#1FB8CD',
-                        borderColor: '#1FB8CD',
-                        pointRadius: 3
+                        data: cornerData.filter(p => p.classification === 'neutral').map(p => ({x: Math.abs(p.G_LAT), y: p.understeerAngle})),
+                        backgroundColor: '#1FB8CD'
                     }
                 ]
             },
@@ -928,17 +808,10 @@ class ACCTelemetryApp {
                     x: {title: {display: true, text: 'Lateral G (g)'}},
                     y: {
                         title: {display: true, text: 'USOS Angle (deg)'},
-                        grid: {
-                            color: function(context) {
-                                if (context.tick.value === 0) return '#666';
-                                return '#ddd';
-                            }
-                        }
                     }
                 },
                 plugins: {
-                    title: {display: true, text: 'USOS Analysis Using Setup Parameters'},
-                    legend: {display: true}
+                    title: {display: true, text: 'USOS Analysis'},
                 }
             }
         });
@@ -948,28 +821,25 @@ class ACCTelemetryApp {
         const canvas = document.getElementById('balanceChart');
         if (!canvas || !this.analysisResults) return;
         
-        const ctx = canvas.getContext('2d');
         if (this.charts.balance) this.charts.balance.destroy();
 
         const dist = this.analysisResults.balanceDistribution;
         
-        this.charts.balance = new Chart(ctx, {
+        this.charts.balance = new Chart(canvas.getContext('2d'), {
             type: 'pie',
             data: {
                 labels: ['Understeer', 'Neutral', 'Oversteer'],
                 datasets: [{
                     data: [dist.understeer, dist.neutral, dist.oversteer],
                     backgroundColor: ['#B4413C', '#1FB8CD', '#FFC185'],
-                    borderWidth: 2,
-                    borderColor: '#ffffff'
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    title: {display: true, text: 'Balance Distribution Analysis'},
-                    legend: {display: true, position: 'bottom'}
+                    title: {display: true, text: 'Balance Distribution'},
+                    legend: {position: 'bottom'}
                 }
             }
         });
@@ -979,30 +849,27 @@ class ACCTelemetryApp {
         const canvas = document.getElementById('suspensionChart');
         if (!canvas || !this.analysisResults.suspensionAnalysis) return;
         
-        const ctx = canvas.getContext('2d');
         if (this.charts.suspension) this.charts.suspension.destroy();
 
         const suspData = this.analysisResults.suspensionAnalysis;
         const sampledData = suspData.frontTravel.filter((_, i) => i % 10 === 0);
         const sampledRear = suspData.rearTravel.filter((_, i) => i % 10 === 0);
         
-        this.charts.suspension = new Chart(ctx, {
+        this.charts.suspension = new Chart(canvas.getContext('2d'), {
             type: 'line',
             data: {
                 labels: sampledData.map((_, i) => (i * 0.2).toFixed(1)),
                 datasets: [
                     {
-                        label: 'Front Suspension Travel (%)',
+                        label: 'Front Travel (%)',
                         data: sampledData,
                         borderColor: '#1FB8CD',
-                        backgroundColor: 'rgba(31, 184, 205, 0.1)',
                         tension: 0.1
                     },
                     {
-                        label: 'Rear Suspension Travel (%)',
+                        label: 'Rear Travel (%)',
                         data: sampledRear,
                         borderColor: '#B4413C',
-                        backgroundColor: 'rgba(180, 65, 60, 0.1)',
                         tension: 0.1
                     }
                 ]
@@ -1013,10 +880,6 @@ class ACCTelemetryApp {
                 scales: {
                     x: {title: {display: true, text: 'Time (s)'}},
                     y: {title: {display: true, text: 'Suspension Travel (%)'}}
-                },
-                plugins: {
-                    title: {display: true, text: 'Suspension Analysis'},
-                    legend: {display: true}
                 }
             }
         });
@@ -1026,32 +889,26 @@ class ACCTelemetryApp {
         const container = document.getElementById('cornersTable');
         if (!container || !this.processedData) return;
         
-        const cornerData = this.processedData.filter(p => p.isCorner);
-        const cornerGroups = this.groupCornersByPhase(cornerData);
+        const cornerGroups = this.groupCornersByPhase(this.processedData.filter(p => p.isCorner));
         
         let html = `
             <div class="corner-row header">
                 <div class="corner-cell">Corner #</div>
-                <div class="corner-cell">Max Lateral G</div>
-                <div class="corner-cell">Balance Classification</div>
-                <div class="corner-cell">USOS Value</div>
-                <div class="corner-cell">Confidence</div>
-                <div class="corner-cell">Suspension Travel</div>
+                <div class="corner-cell">Max Lat G</div>
+                <div class="corner-cell">Balance</div>
+                <div class="corner-cell">Avg USOS</div>
             </div>
         `;
 
         cornerGroups.slice(0, 10).forEach((corner, index) => {
-            const confidence = Math.min(100, Math.abs(corner.avgUsos) * 30 + corner.dataPoints);
             html += `
                 <div class="corner-row">
                     <div class="corner-cell">${index + 1}</div>
                     <div class="corner-cell">${corner.maxLateralG.toFixed(2)}</div>
                     <div class="corner-cell">
-                        <span class="corner-status ${corner.classification}">${corner.classification.toUpperCase()}</span>
+                        <span class="corner-status ${corner.classification}">${corner.classification}</span>
                     </div>
                     <div class="corner-cell font-mono">${corner.avgUsos.toFixed(2)}</div>
-                    <div class="corner-cell">${confidence.toFixed(0)}%</div>
-                    <div class="corner-cell">${corner.suspensionInfo}</div>
                 </div>
             `;
         });
@@ -1067,43 +924,28 @@ class ACCTelemetryApp {
             if (Math.abs(cornerData[i].G_LAT) > 0.8) {
                 currentGroup.push(cornerData[i]);
             } else if (currentGroup.length > 5) {
-                const maxG = Math.max(...currentGroup.map(p => Math.abs(p.G_LAT)));
-                const avgUsos = currentGroup.reduce((sum, p) => sum + p.understeerAngle, 0) / currentGroup.length;
-                const avgSusp = currentGroup.reduce((sum, p) => sum + (p.SUSP_TRAVEL_LF + p.SUSP_TRAVEL_RF) / 2, 0) / currentGroup.length;
-                
-                groups.push({
-                    maxLateralG: maxG,
-                    avgUsos: avgUsos,
-                    classification: avgUsos > 2 ? 'understeer' : (avgUsos < -1 ? 'oversteer' : 'neutral'),
-                    dataPoints: currentGroup.length,
-                    suspensionInfo: `${avgSusp.toFixed(1)}%`
-                });
+                this.processCornerGroup(groups, currentGroup);
                 currentGroup = [];
             }
         }
+        if (currentGroup.length > 5) { this.processCornerGroup(groups, currentGroup); }
         
         return groups;
     }
-
+    processCornerGroup(groups, groupData) { const maxG = Math.max(...groupData.map(p => Math.abs(p.G_LAT))); const avgUsos = groupData.reduce((s, p) => s + p.understeerAngle, 0) / groupData.length; groups.push({ maxLateralG: maxG, avgUsos: avgUsos, classification: avgUsos < this.analysisThresholds.understeer ? 'understeer' : (avgUsos > this.analysisThresholds.oversteer ? 'oversteer' : 'neutral'), }); }
+    
     generateGroupedRecommendations() {
-        console.log('Generating recommendations...');
-        
-        if (!this.analysisResults) {
-            console.warn('Missing analysis results for recommendations');
-            return;
-        }
-
-        const avgUsos = this.analysisResults.usosAverage;
-        const balance = this.analysisResults.balanceDistribution;
-        
+        if (!this.analysisResults) return;
+        const { usosAverage, balanceDistribution } = this.analysisResults;
         let primaryIssue = 'neutral';
-        if (avgUsos > 1.5 || balance.understeer > 40) {
+        // More sensitive detection of primary issue
+        if (usosAverage < -1.0 || balanceDistribution.understeer > 45) {
             primaryIssue = 'understeer';
-        } else if (avgUsos < -1.0 || balance.oversteer > 30) {
+        } else if (usosAverage > 0.8 || balanceDistribution.oversteer > 40) {
             primaryIssue = 'oversteer';
         }
 
-        console.log('Primary issue detected:', primaryIssue);
+        console.log(`Primary issue detected: ${primaryIssue}`);
 
         this.generateConservativeRecommendations(primaryIssue);
         this.generateMechanicalRecommendations(primaryIssue);
@@ -1113,51 +955,101 @@ class ACCTelemetryApp {
     generateConservativeRecommendations(issue) {
         const container = document.getElementById('conservativeList');
         if (!container) return;
-        
         container.innerHTML = '';
-        
+        const currentBB = this.currentSetupData?.currentSetup?.brakeBias || 55.0;
+
         if (issue === 'understeer') {
-            this.addRecommendationItem(container, 'Reduce TC1 for more rotation', -1, 85, 'Allows more wheel slip to help rotation');
-            this.addRecommendationItem(container, 'Reduce TC2 slightly', -1, 80, 'Less intervention on throttle');
+            this.addRecommendationItem(container, 'Reduce TC1 for more rotation on exit', '-1 click', 85, 'Allows more wheel slip');
+            this.addRecommendationItem(container, 'Lower front tyre pressures', '-0.2 psi', 75, 'Increases front contact patch');
+            this.addRecommendationItem(container, 'Increase rear tyre pressures', '+0.2 psi', 70, 'Reduces rear grip to aid rotation');
+            this.addRecommendationItem(container, 'Shift brake bias rearward', `${(currentBB - 0.4).toFixed(1)}%`, 80, 'Promotes trail-braking rotation');
+            this.addRecommendationItem(container, 'Reduce ABS intervention', '-1 click', 65, 'Can help bite on turn-in');
         } else if (issue === 'oversteer') {
-            this.addRecommendationItem(container, 'Increase TC1 for stability', 1, 85, 'More stability control');
-            this.addRecommendationItem(container, 'Increase TC2 for traction', 2, 80, 'Better traction on exit');
+            this.addRecommendationItem(container, 'Increase TC1 for more stability', '+1 click', 85, 'Reduces power oversteer');
+            this.addRecommendationItem(container, 'Increase TC2 for better traction', '+1 click', 75, 'Catches snaps on throttle');
+            this.addRecommendationItem(container, 'Lower rear tyre pressures', '-0.2 psi', 80, 'Increases rear contact patch');
+            this.addRecommendationItem(container, 'Increase front tyre pressures', '+0.2 psi', 70, 'Reduces front grip slightly');
+            this.addRecommendationItem(container, 'Shift brake bias forward', `${(currentBB + 0.4).toFixed(1)}%`, 75, 'Reduces lift-off oversteer');
         } else {
-            this.addRecommendationItem(container, 'Current balance is good', 'Maintain', 90, 'No major changes needed');
+            this.addRecommendationItem(container, 'Electronics and Pressures are balanced', 'Maintain', 90, 'No major changes needed');
+            this.addRecommendationItem(container, 'Fine-tune tyre pressures for track temp', '±0.1 psi', 80, 'Optimize for conditions');
+            this.addRecommendationItem(container, 'Verify brake bias for stability', '±0.2%', 75, 'Adjust for personal preference');
+            this.addRecommendationItem(container, 'TC settings appear optimal', 'Maintain', 85, 'Adjust if surface is slippery');
+            this.addRecommendationItem(container, 'ABS setting is in a good window', 'Maintain', 80, 'Adjust for heavy braking zones');
         }
     }
 
     generateMechanicalRecommendations(issue) {
         const container = document.getElementById('mechanicalList');
         if (!container) return;
-        
         container.innerHTML = '';
-        
+        const susp = this.analysisResults.suspensionAnalysis;
+        const frontHits = susp?.bumpstopHits?.front || 0;
+
         if (issue === 'understeer') {
-            this.addRecommendationItem(container, 'Soften front anti-roll bar', -4, 90, 'Increases front grip');
-            this.addRecommendationItem(container, 'Stiffen rear anti-roll bar', 2, 85, 'Reduces rear grip for rotation');
+            this.addRecommendationItem(container, 'Soften front Anti-Roll Bar', '-2 clicks', 90, 'Increases front mechanical grip');
+            this.addRecommendationItem(container, 'Stiffen rear Anti-Roll Bar', '+1 click', 80, 'Reduces rear grip to aid rotation');
+            this.addRecommendationItem(container, 'Increase front negative camber', '-0.2 deg', 75, 'Improves mid-corner front grip');
+            this.addRecommendationItem(container, 'Add slight front toe out', '±0.05 deg', 70, 'Improves turn-in response');
+            if (frontHits > 5) {
+                this.addRecommendationItem(container, 'Stiffen front bumpstop rate', '+2 clicks', 85, 'Prevents bottoming out, maintains platform');
+            } else {
+                this.addRecommendationItem(container, 'Soften front springs', '-1 click', 70, 'Allows more weight transfer forward');
+            }
         } else if (issue === 'oversteer') {
-            this.addRecommendationItem(container, 'Soften rear anti-roll bar', -4, 90, 'Increases rear stability');
-            this.addRecommendationItem(container, 'Stiffen front anti-roll bar', 2, 85, 'Reduces front grip');
+            this.addRecommendationItem(container, 'Stiffen front Anti-Roll Bar', '+2 clicks', 90, 'Reduces front grip, balances car');
+            this.addRecommendationItem(container, 'Soften rear Anti-Roll Bar', '-2 clicks', 85, 'Increases rear mechanical grip');
+            this.addRecommendationItem(container, 'Reduce rear toe-in', '±0.05 deg', 75, 'Frees up the rear on entry');
+            this.addRecommendationItem(container, 'Soften rear springs', '-1 click', 80, 'Improves traction and stability');
+            this.addRecommendationItem(container, 'Increase rear negative camber', '-0.2 deg', 70, 'Improves rear grip mid-corner');
         } else {
-            this.addRecommendationItem(container, 'Suspension well balanced', 'Fine-tune', 92, 'Minor adjustments only');
+            this.addRecommendationItem(container, 'Mechanical balance is strong', 'Maintain', 90, 'ARBs and Springs are in a good window');
+            this.addRecommendationItem(container, 'Check front toe for responsiveness', '±0.03 deg', 80, 'Fine-tune turn-in feel');
+            this.addRecommendationItem(container, 'Verify camber angles for tyre wear', '±0.1 deg', 75, 'Optimize for long runs');
+            this.addRecommendationItem(container, 'Suspension settings are effective', 'Maintain', 85, 'Platform is stable');
+             if (frontHits > 5) {
+                this.addRecommendationItem(container, 'Front bumpstops are active', 'Consider +1 click', 85, 'Potential to improve stability');
+            } else {
+                this.addRecommendationItem(container, 'Bumpstop settings appear optimal', 'Maintain', 80, 'Not hitting bumpstops excessively');
+            }
         }
     }
 
     generateAerodynamicRecommendations(issue) {
         const container = document.getElementById('aerodynamicList');
         if (!container) return;
-        
         container.innerHTML = '';
-        
+        const susp = this.analysisResults.suspensionAnalysis;
+        const frontHits = susp?.bumpstopHits?.front || 0;
+
         if (issue === 'understeer') {
-            this.addRecommendationItem(container, 'Reduce front splitter', -2, 85, 'Less front downforce');
-            this.addRecommendationItem(container, 'Increase rear wing', 3, 80, 'More rear stability');
+            // CORRECTED LOGIC: To fix understeer, you need MORE front downforce or LESS rear.
+            this.addRecommendationItem(container, 'Increase front splitter', '+1 click', 85, 'Shifts aero balance forward');
+            this.addRecommendationItem(container, 'Decrease rear wing', '-1 click', 90, 'Reduces rear downforce to aid rotation');
+            this.addRecommendationItem(container, 'Lower front ride height', '-2 mm', 80, 'Increases rake, shifts aero forward');
+            this.addRecommendationItem(container, 'Raise rear ride height', '+2 mm', 80, 'Increases rake, shifts aero forward');
+             if (frontHits > 5) {
+                this.addRecommendationItem(container, 'Front is bottoming out', 'WARNING', 95, 'Stiffen front springs before lowering ride height');
+            } else {
+                this.addRecommendationItem(container, 'Aero platform is stable', 'Safe to adjust', 70, 'No excessive bottoming out detected');
+            }
         } else if (issue === 'oversteer') {
-            this.addRecommendationItem(container, 'Reduce rear wing', -2, 85, 'Less rear downforce');
-            this.addRecommendationItem(container, 'Increase front splitter', 2, 80, 'More front stability');
+            // CORRECTED LOGIC: To fix oversteer, you need LESS front downforce or MORE rear.
+            this.addRecommendationItem(container, 'Increase rear wing', '+1 click', 90, 'Increases rear stability');
+            this.addRecommendationItem(container, 'Decrease front splitter', '-1 click', 85, 'Shifts aero balance rearward');
+            this.addRecommendationItem(container, 'Raise front ride height', '+2 mm', 80, 'Reduces rake, shifts aero rearward');
+            this.addRecommendationItem(container, 'Lower rear ride height', '-2 mm', 80, 'Reduces rake, shifts aero rearward');
+            this.addRecommendationItem(container, 'Check diffuser stall', 'Ensure RH > 60mm', 70, 'A stalled diffuser causes sudden oversteer');
         } else {
-            this.addRecommendationItem(container, 'Aero balance optimal', 'Track-specific', 88, 'Adjust for track requirements');
+            this.addRecommendationItem(container, 'Aero balance is effective', 'Maintain', 90, 'Wing and splitter settings are well-matched');
+            this.addRecommendationItem(container, 'Ride height and rake are optimal', 'Maintain', 85, 'Platform is working efficiently');
+            this.addRecommendationItem(container, 'Consider track type for aero level', 'High/Low DF', 75, 'Adjust overall downforce for the circuit');
+            this.addRecommendationItem(container, 'Current wing setting is a good baseline', 'Fine-tune', 80, 'Adjust by ±1 click for balance');
+             if (frontHits > 5) {
+                this.addRecommendationItem(container, 'Front ride height is at its limit', 'WARNING', 95, 'Do not lower front further without spring changes');
+            } else {
+                this.addRecommendationItem(container, 'Aero platform is stable', 'Safe to adjust', 70, 'No excessive bottoming out detected');
+            }
         }
     }
 
@@ -1165,16 +1057,15 @@ class ACCTelemetryApp {
         const item = document.createElement('div');
         item.className = 'recommendation-item';
         
-        const confidenceClass = confidence > 80 ? 'confidence-high' : 
-                               confidence > 60 ? 'confidence-medium' : 'confidence-low';
+        const confidenceClass = confidence > 80 ? 'high' : 
+                               confidence > 65 ? 'medium' : 'low';
         
-        const changeClass = typeof change === 'number' ? 
-                          (change > 0 ? 'positive' : change < 0 ? 'negative' : 'neutral') : 'neutral';
+        const changeClass = change.toString().startsWith('-') ? 'negative' : (change.toString().startsWith('+') ? 'positive' : 'neutral');
         
         item.innerHTML = `
             <div class="recommendation-header">
                 <span class="recommendation-text">${text}</span>
-                <span class="recommendation-confidence ${confidenceClass}">${confidence}%</span>
+                <span class="recommendation-confidence confidence-${confidenceClass}">${confidence}%</span>
             </div>
             <div class="recommendation-details">
                 <span class="recommendation-change ${changeClass}">${change}</span>
@@ -1186,86 +1077,43 @@ class ACCTelemetryApp {
     }
 
     generateProfessionalReport() {
-        console.log('Generating professional report...');
-        
         const summary = document.getElementById('reportSummary');
-        const confidence = document.getElementById('confidenceMetrics');
-        const predictions = document.getElementById('improvementPredictions');
 
         if (summary && this.analysisResults && this.currentSetupData) {
             const dist = this.analysisResults.balanceDistribution;
-            const primaryIssue = dist.understeer > dist.oversteer ? 'understeer tendency' : 
-                               dist.oversteer > dist.understeer ? 'oversteer tendency' : 'balanced behavior';
+            const primaryIssue = dist.understeer > 40 ? 'significant understeer' : 
+                               dist.oversteer > 30 ? 'significant oversteer' : 'a generally balanced behavior';
             
             summary.innerHTML = `
-                <h4>Executive Summary - Professional Analysis</h4>
-                <p>Analysis of ${this.telemetryData.length} data points for ${this.currentSetupData.carInfo.carName} reveals a vehicle with ${primaryIssue}.</p>
-                <p>Balance Distribution: ${dist.understeer.toFixed(1)}% understeer, ${dist.oversteer.toFixed(1)}% oversteer, ${dist.neutral.toFixed(1)}% neutral</p>
-                <p>USOS Factor: ${this.analysisResults.usosAverage.toFixed(2)}° (${this.analysisResults.confidence}% confidence)</p>
-                <p class="text-success">✅ Analysis based on actual setup parameters</p>
-            `;
-        }
-
-        if (confidence && this.analysisResults) {
-            confidence.innerHTML = `
-                <h4>Analysis Confidence & Validation</h4>
-                <div>Data Quality: ${this.analysisResults.confidence.toFixed(0)}%</div>
-                <div>Corner Detection: ${this.analysisResults.totalCorners} corners analyzed</div>
-                <div>Setup Integration: Using actual alignment values</div>
-                <div>Suspension Data: ${this.analysisResults.suspensionAnalysis ? 'Available' : 'Missing'}</div>
-            `;
-        }
-
-        if (predictions) {
-            const suspAnalysis = this.analysisResults.suspensionAnalysis;
-            predictions.innerHTML = `
-                <h4>Expected Improvements</h4>
-                <div>Lap Time: -0.2 to -0.8 seconds</div>
-                <div>Consistency: +15-25%</div>
-                <div>Tire Wear: Improved balance reduces excessive wear</div>
-                <div>Suspension: ${suspAnalysis?.rideHeightIssues ? 'Ride height optimization needed' : 'Suspension travel optimal'}</div>
-                <div class="text-success">Setup-specific recommendations for maximum effectiveness</div>
+                <h4>Executive Summary</h4>
+                <p>Analysis for ${this.currentSetupData.carInfo.carName} reveals ${p}.</p>
+                <p>Balance: ${dist.understeer.toFixed(1)}% understeer, ${dist.oversteer.toFixed(1)}% oversteer.</p>
+                <p>Avg USOS Factor: ${this.analysisResults.usosAverage.toFixed(2)}°</p>
             `;
         }
     }
 
     setupTabNavigation() {
-        console.log('Setting up tab navigation...');
-        
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
+        document.querySelectorAll('.tab-btn, .setup-tab-btn').forEach(btn => {
+            btn.addEventListener('click', e => {
+                const isSetupTab = e.target.classList.contains('setup-tab-btn');
                 const tabId = e.target.dataset.tab;
+                const btnSelector = isSetupTab ? '.setup-tab-btn' : '.tab-btn';
+                const contentSelector = isSetupTab ? '.setup-tab-content' : '.tab-content';
                 
-                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll(btnSelector).forEach(b => b.classList.remove('active'));
                 e.target.classList.add('active');
                 
-                document.querySelectorAll('.tab-content').forEach(content => {
+                document.querySelectorAll(contentSelector).forEach(content => {
                     content.classList.remove('active');
                 });
-                const targetTab = document.getElementById(tabId);
-                if (targetTab) targetTab.classList.add('active');
-            });
-        });
-
-        document.querySelectorAll('.setup-tab-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const tabId = e.target.dataset.tab;
-                
-                document.querySelectorAll('.setup-tab-btn').forEach(b => b.classList.remove('active'));
-                e.target.classList.add('active');
-                
-                document.querySelectorAll('.setup-tab-content').forEach(content => {
-                    content.classList.remove('active');
-                });
-                const targetTab = document.getElementById(tabId);
-                if (targetTab) targetTab.classList.add('active');
+                document.getElementById(tabId)?.classList.add('active');
             });
         });
     }
 
     // IMPLEMENTED: Make setup sliders interactive
     setupSetupControls() {
-        console.log('Setting up interactive setup controls...');
         document.querySelectorAll('.setup-slider').forEach(slider => {
             slider.addEventListener('input', this.handleSliderInput.bind(this));
         });
@@ -1273,10 +1121,7 @@ class ACCTelemetryApp {
 
     handleSliderInput(event) {
         const slider = event.target;
-        const valueSpan = document.getElementById(`${slider.id}Value`);
-        if (valueSpan) {
-            valueSpan.textContent = parseFloat(slider.value).toFixed(slider.step.includes('.') ? 1 : 0);
-        }
+        document.getElementById(`${slider.id}Value`).textContent = parseFloat(slider.value).toFixed(slider.step.includes('.') ? 1 : 0);
     }
 
     // IMPLEMENTED: Populate sliders with loaded setup data
@@ -1365,8 +1210,6 @@ class ACCTelemetryApp {
     }
 
     showStatus(message, type) {
-        console.log('Status:', type, message);
-        
         const statusDiv = document.createElement('div');
         statusDiv.className = `status-message ${type}`;
         statusDiv.textContent = message;
@@ -1376,9 +1219,7 @@ class ACCTelemetryApp {
             main.insertBefore(statusDiv, main.firstChild);
             
             setTimeout(() => {
-                if (statusDiv.parentNode) {
-                    statusDiv.parentNode.removeChild(statusDiv);
-                }
+                statusDiv.remove();
             }, 5000);
         }
     }
@@ -1386,7 +1227,6 @@ class ACCTelemetryApp {
 
 // Initialize the application
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('DOM loaded, initializing ACC Telemetry App with JSON setup upload...');
     try {
         window.accApp = new ACCTelemetryApp();
     } catch (error) {
