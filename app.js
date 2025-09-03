@@ -628,19 +628,20 @@ class ACCTelemetryApp {
                 // LOGIC INVERTED AND CORRECTED: Ideal - Actual.
                 // Negative result = UNDERSTEER (Actual > Ideal)
                 // Positive result = OVERSTEER (Actual < Ideal)
+                // REMOVED FLAWED SIGNING: The original `usos` value is correct.
+                // The previous `signedUSOS` logic was incorrectly flipping the sign during counter-steer.
                 const usos = kinematicSteer - Math.abs(steerAngle);
-                const signedUSOS = usos * Math.sign(lateralG * steerAngle);
                 
                 let classification = 'neutral';
-                // CORRECTED: Classification logic now matches the inverted formula and new thresholds.
-                if (signedUSOS < this.analysisThresholds.understeer) { // e.g., < -2.0
+                // CORRECTED: Classification logic now uses the direct `usos` value.
+                if (usos < this.analysisThresholds.understeer) { // e.g., < -2.0
                     classification = 'understeer';
-                } else if (signedUSOS > this.analysisThresholds.oversteer) { // e.g., > 1.0
+                } else if (usos > this.analysisThresholds.oversteer) { // e.g., > 1.0
                     classification = 'oversteer';
                 }
                 
                 usosValues.push({
-                    usos: signedUSOS,
+                    usos: usos,
                     classification: classification
                 });
             } else {
