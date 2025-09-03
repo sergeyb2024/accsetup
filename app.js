@@ -1086,7 +1086,7 @@ class ACCTelemetryApp {
             
             summary.innerHTML = `
                 <h4>Executive Summary</h4>
-                <p>Analysis for ${this.currentSetupData.carInfo.carName} reveals ${p}.</p>
+                <p>Analysis for ${this.currentSetupData.carInfo.carName} reveals ${primaryIssue}.</p>
                 <p>Balance: ${dist.understeer.toFixed(1)}% understeer, ${dist.oversteer.toFixed(1)}% oversteer.</p>
                 <p>Avg USOS Factor: ${this.analysisResults.usosAverage.toFixed(2)}°</p>
             `;
@@ -1189,24 +1189,56 @@ class ACCTelemetryApp {
     }
 
     parseCSV(csvText) {
-        const lines = csvText.split('\n');
+        const lines = csvText.split('\n').filter(line => line.trim() !== '');
+        if (lines.length < 2) {
+            this.showStatus('CSV file is empty or contains only a header.', 'error');
+            return;
+        }
+
         const headers = lines[0].split(',').map(h => h.trim());
         
         this.telemetryData = [];
+        let skippedLines = 0;
+
         for (let i = 1; i < lines.length; i++) {
-            if (lines[i].trim()) {
-                const values = lines[i].split(',');
-                const dataPoint = {};
-                headers.forEach((header, index) => {
-                    dataPoint[header] = parseFloat(values[index]) || 0;
-                });
-                this.telemetryData.push(dataPoint);
+            const values = lines[i].split(',');
+
+            if (values.length !== headers.length) {
+                console.warn(`Skipping line ${i + 1}: column count mismatch. Expected ${headers.length}, got ${values.length}.`);
+                skippedLines++;
+                continue;
             }
+
+            const dataPoint = {};
+            let lineHasError = false;
+            for (let j = 0; j < headers.length; j++) {
+                const value = parseFloat(values[j]);
+                if (isNaN(value)) {
+                    console.warn(`Skipping line ${i + 1}: non-numeric value for header '${headers[j]}'.`);
+                    lineHasError = true;
+                    break; 
+                }
+                dataPoint[headers[j]] = value;
+            }
+
+            if (lineHasError) {
+                skippedLines++;
+                continue;
+            }
+            
+            this.telemetryData.push(dataPoint);
         }
 
         this.validateTelemetryData(headers);
         document.getElementById('processDataBtn').classList.remove('hidden');
-        this.showStatus(`Loaded ${this.telemetryData.length} data points from CSV`, 'success');
+        
+        let statusMessage = `Loaded ${this.telemetryData.length} data points from CSV.`;
+        if (skippedLines > 0) {
+            statusMessage += ` Skipped ${skippedLines} malformed lines.`;
+            this.showStatus(statusMessage, 'warning');
+        } else {
+            this.showStatus(statusMessage, 'success');
+        }
     }
 
     showStatus(message, type) {
