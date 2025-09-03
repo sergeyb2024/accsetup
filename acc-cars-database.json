@@ -1,0 +1,1104 @@
+[
+  {
+    "carId": "mercedes_amg_gt3",
+    "carName": "Mercedes-AMG GT3",
+    "carModelYear": 2015,
+    "carClass": "GT3",
+    "wheelbase": 2.665,
+    "setupParameters": {
+      "tyres": {
+        "pressureLF": {"min": 24.0, "max": 32.0, "default": 27.5},
+        "pressureRF": {"min": 24.0, "max": 32.0, "default": 27.5},
+        "pressureLR": {"min": 24.0, "max": 32.0, "default": 27.0},
+        "pressureRR": {"min": 24.0, "max": 32.0, "default": 27.0},
+        "camberFront": {"min": -4.0, "max": -1.0, "default": -2.8},
+        "camberRear": {"min": -3.0, "max": -1.0, "default": -2.0}
+      },
+      "electronics": {
+        "tC1": {"min": 0, "max": 11, "default": 4},
+        "tC2": {"min": 0, "max": 20, "default": 6},
+        "abs": {"min": 1, "max": 11, "default": 3},
+        "brakeBias": {"min": 50.0, "max": 80.0, "default": 65.0}
+      },
+      "aero": {
+        "splitter": {"min": 0, "max": 5, "default": 2},
+        "wing": {"min": 0, "max": 12, "default": 6},
+        "rideHeightFront": {"min": 50, "max": 120, "default": 65},
+        "rideHeightRear": {"min": 55, "max": 120, "default": 70}
+      },
+      "mechanicalGrip": {
+        "ARBFront": {"min": 0, "max": 30, "default": 15},
+        "ARBRear": {"min": 0, "max": 30, "default": 18},
+        "preload": {"min": 20, "max": 200, "default": 80}
+      },
+      "dampers": {
+        "bumpSlow": {"min": 5, "max": 40, "default": 20},
+        "reboundSlow": {"min": 5, "max": 40, "default": 25}
+      }
+    }
+  },
+  {
+    "carId": "mercedes_amg_gt3_evo",
+    "carName": "Mercedes-AMG GT3 Evo",
+    "carModelYear": 2020,
+    "carClass": "GT3",
+    "wheelbase": 2.665,
+    "setupParameters": {
+      "tyres": {
+        "pressureLF": {"min": 24.0, "max": 32.0, "default": 27.4},
+        "pressureRF": {"min": 24.0, "max": 32.0, "default": 27.4},
+        "pressureLR": {"min": 24.0, "max": 32.0, "default": 26.9},
+        "pressureRR": {"min": 24.0, "max": 32.0, "default": 26.9},
+        "camberFront": {"min": -4.0, "max": -1.0, "default": -2.9},
+        "camberRear": {"min": -3.0, "max": -1.0, "default": -2.1}
+      },
+      "electronics": {
+        "tC1": {"min": 0, "max": 11, "default": 3},
+        "tC2": {"min": 0, "max": 20, "default": 5},
+        "abs": {"min": 1, "max": 11, "default": 2},
+        "brakeBias": {"min": 50.0, "max": 80.0, "default": 64.0}
+      },
+      "aero": {
+        "splitter": {"min": 0, "max": 5, "default": 2},
+        "wing": {"min": 0, "max": 12, "default": 5},
+        "rideHeightFront": {"min": 50, "max": 120, "default": 64},
+        "rideHeightRear": {"min": 55, "max": 120, "default": 69}
+      },
+      "mechanicalGrip": {
+        "ARBFront": {"min": 0, "max": 30, "default": 14},
+        "ARBRear": {"min": 0, "max": 30, "default": 17},
+        "preload": {"min": 20, "max": 200, "default": 75}
+      },
+      "dampers": {
+        "bumpSlow": {"min": 5, "max": 40, "default": 19},
+        "reboundSlow": {"min": 5, "max": 40, "default": 24}
+      }
+    }
+  },
+  {
+    "carId": "bmw_m4_gt3",
+    "carName": "BMW M4 GT3",
+    "carModelYear": 2021,
+    "carClass": "GT3",
+    "wheelbase": 2.810,
+    "setupParameters": {
+      "tyres": {
+        "pressureLF": {"min": 24.0, "max": 32.0, "default": 27.2},
+        "pressureRF": {"min": 24.0, "max": 32.0, "default": 27.2},
+        "pressureLR": {"min": 24.0, "max": 32.0, "default": 26.8},
+        "pressureRR": {"min": 24.0, "max": 32.0, "default": 26.8},
+        "camberFront": {"min": -4.0, "max": -1.0, "default": -2.7},
+        "camberRear": {"min": -3.0, "max": -1.0, "default": -1.9}
+      },
+      "electronics": {
+        "tC1": {"min": 0, "max": 11, "default": 5},
+        "tC2": {"min": 0, "max": 20, "default": 7},
+        "abs": {"min": 1, "max": 11, "default": 4},
+        "brakeBias": {"min": 50.0, "max": 80.0, "default": 62.0}
+      },
+      "aero": {
+        "splitter": {"min": 0, "max": 4, "default": 1},
+        "wing": {"min": 0, "max": 15, "default": 8},
+        "rideHeightFront": {"min": 48, "max": 115, "default": 62},
+        "rideHeightRear": {"min": 52, "max": 115, "default": 68}
+      },
+      "mechanicalGrip": {
+        "ARBFront": {"min": 0, "max": 30, "default": 12},
+        "ARBRear": {"min": 0, "max": 30, "default": 16},
+        "preload": {"min": 20, "max": 200, "default": 85}
+      },
+      "dampers": {
+        "bumpSlow": {"min": 5, "max": 40, "default": 22},
+        "reboundSlow": {"min": 5, "max": 40, "default": 27}
+      }
+    }
+  },
+  {
+    "carId": "bmw_m6_gt3",
+    "carName": "BMW M6 GT3",
+    "carModelYear": 2017,
+    "carClass": "GT3",
+    "wheelbase": 2.850,
+    "setupParameters": {
+      "tyres": {
+        "pressureLF": {"min": 24.0, "max": 32.0, "default": 27.3},
+        "pressureRF": {"min": 24.0, "max": 32.0, "default": 27.3},
+        "pressureLR": {"min": 24.0, "max": 32.0, "default": 26.9},
+        "pressureRR": {"min": 24.0, "max": 32.0, "default": 26.9},
+        "camberFront": {"min": -4.0, "max": -1.0, "default": -2.6},
+        "camberRear": {"min": -3.0, "max": -1.0, "default": -1.8}
+      },
+      "electronics": {
+        "tC1": {"min": 0, "max": 11, "default": 4},
+        "tC2": {"min": 0, "max": 20, "default": 6},
+        "abs": {"min": 1, "max": 11, "default": 3},
+        "brakeBias": {"min": 50.0, "max": 80.0, "default": 63.0}
+      },
+      "aero": {
+        "splitter": {"min": 0, "max": 5, "default": 2},
+        "wing": {"min": 0, "max": 12, "default": 7},
+        "rideHeightFront": {"min": 50, "max": 120, "default": 66},
+        "rideHeightRear": {"min": 55, "max": 120, "default": 71}
+      },
+      "mechanicalGrip": {
+        "ARBFront": {"min": 0, "max": 30, "default": 13},
+        "ARBRear": {"min": 0, "max": 30, "default": 17},
+        "preload": {"min": 20, "max": 200, "default": 90}
+      },
+      "dampers": {
+        "bumpSlow": {"min": 5, "max": 40, "default": 21},
+        "reboundSlow": {"min": 5, "max": 40, "default": 26}
+      }
+    }
+  },
+  {
+    "carId": "audi_r8_lms",
+    "carName": "Audi R8 LMS",
+    "carModelYear": 2015,
+    "carClass": "GT3",
+    "wheelbase": 2.650,
+    "setupParameters": {
+      "tyres": {
+        "pressureLF": {"min": 24.0, "max": 32.0, "default": 27.7},
+        "pressureRF": {"min": 24.0, "max": 32.0, "default": 27.7},
+        "pressureLR": {"min": 24.0, "max": 32.0, "default": 27.1},
+        "pressureRR": {"min": 24.0, "max": 32.0, "default": 27.1},
+        "camberFront": {"min": -4.0, "max": -1.0, "default": -2.9},
+        "camberRear": {"min": -3.0, "max": -1.0, "default": -2.2}
+      },
+      "electronics": {
+        "tC1": {"min": 0, "max": 11, "default": 4},
+        "tC2": {"min": 0, "max": 20, "default": 6},
+        "abs": {"min": 1, "max": 11, "default": 3},
+        "brakeBias": {"min": 50.0, "max": 80.0, "default": 66.0}
+      },
+      "aero": {
+        "splitter": {"min": 0, "max": 5, "default": 2},
+        "wing": {"min": 0, "max": 12, "default": 6},
+        "rideHeightFront": {"min": 50, "max": 120, "default": 67},
+        "rideHeightRear": {"min": 55, "max": 120, "default": 72}
+      },
+      "mechanicalGrip": {
+        "ARBFront": {"min": 0, "max": 30, "default": 16},
+        "ARBRear": {"min": 0, "max": 30, "default": 20},
+        "preload": {"min": 20, "max": 200, "default": 70}
+      },
+      "dampers": {
+        "bumpSlow": {"min": 5, "max": 40, "default": 18},
+        "reboundSlow": {"min": 5, "max": 40, "default": 23}
+      }
+    }
+  },
+  {
+    "carId": "audi_r8_lms_evo",
+    "carName": "Audi R8 LMS Evo",
+    "carModelYear": 2019,
+    "carClass": "GT3",
+    "wheelbase": 2.650,
+    "setupParameters": {
+      "tyres": {
+        "pressureLF": {"min": 24.0, "max": 32.0, "default": 27.8},
+        "pressureRF": {"min": 24.0, "max": 32.0, "default": 27.8},
+        "pressureLR": {"min": 24.0, "max": 32.0, "default": 27.2},
+        "pressureRR": {"min": 24.0, "max": 32.0, "default": 27.2},
+        "camberFront": {"min": -4.0, "max": -1.0, "default": -3.0},
+        "camberRear": {"min": -3.0, "max": -1.0, "default": -2.3}
+      },
+      "electronics": {
+        "tC1": {"min": 0, "max": 11, "default": 3},
+        "tC2": {"min": 0, "max": 20, "default": 5},
+        "abs": {"min": 1, "max": 11, "default": 2},
+        "brakeBias": {"min": 50.0, "max": 80.0, "default": 65.0}
+      },
+      "aero": {
+        "splitter": {"min": 0, "max": 5, "default": 2},
+        "wing": {"min": 0, "max": 12, "default": 5},
+        "rideHeightFront": {"min": 50, "max": 120, "default": 65},
+        "rideHeightRear": {"min": 55, "max": 120, "default": 70}
+      },
+      "mechanicalGrip": {
+        "ARBFront": {"min": 0, "max": 30, "default": 15},
+        "ARBRear": {"min": 0, "max": 30, "default": 19},
+        "preload": {"min": 20, "max": 200, "default": 65}
+      },
+      "dampers": {
+        "bumpSlow": {"min": 5, "max": 40, "default": 17},
+        "reboundSlow": {"min": 5, "max": 40, "default": 22}
+      }
+    }
+  },
+  {
+    "carId": "audi_r8_lms_evo_ii",
+    "carName": "Audi R8 LMS Evo II",
+    "carModelYear": 2022,
+    "carClass": "GT3",
+    "wheelbase": 2.650,
+    "setupParameters": {
+      "tyres": {
+        "pressureLF": {"min": 24.0, "max": 32.0, "default": 27.6},
+        "pressureRF": {"min": 24.0, "max": 32.0, "default": 27.6},
+        "pressureLR": {"min": 24.0, "max": 32.0, "default": 27.0},
+        "pressureRR": {"min": 24.0, "max": 32.0, "default": 27.0},
+        "camberFront": {"min": -4.0, "max": -1.0, "default": -2.8},
+        "camberRear": {"min": -3.0, "max": -1.0, "default": -2.1}
+      },
+      "electronics": {
+        "tC1": {"min": 0, "max": 11, "default": 3},
+        "tC2": {"min": 0, "max": 20, "default": 4},
+        "abs": {"min": 1, "max": 11, "default": 2},
+        "brakeBias": {"min": 50.0, "max": 80.0, "default": 64.0}
+      },
+      "aero": {
+        "splitter": {"min": 0, "max": 5, "default": 2},
+        "wing": {"min": 0, "max": 12, "default": 5},
+        "rideHeightFront": {"min": 50, "max": 120, "default": 63},
+        "rideHeightRear": {"min": 55, "max": 120, "default": 68}
+      },
+      "mechanicalGrip": {
+        "ARBFront": {"min": 0, "max": 30, "default": 14},
+        "ARBRear": {"min": 0, "max": 30, "default": 18},
+        "preload": {"min": 20, "max": 200, "default": 60}
+      },
+      "dampers": {
+        "bumpSlow": {"min": 5, "max": 40, "default": 16},
+        "reboundSlow": {"min": 5, "max": 40, "default": 21}
+      }
+    }
+  },
+  {
+    "carId": "ferrari_488_gt3",
+    "carName": "Ferrari 488 GT3",
+    "carModelYear": 2018,
+    "carClass": "GT3",
+    "wheelbase": 2.650,
+    "setupParameters": {
+      "tyres": {
+        "pressureLF": {"min": 24.0, "max": 32.0, "default": 27.7},
+        "pressureRF": {"min": 24.0, "max": 32.0, "default": 27.7},
+        "pressureLR": {"min": 24.0, "max": 32.0, "default": 27.1},
+        "pressureRR": {"min": 24.0, "max": 32.0, "default": 27.1},
+        "camberFront": {"min": -4.0, "max": -1.0, "default": -2.8},
+        "camberRear": {"min": -3.0, "max": -1.0, "default": -2.0}
+      },
+      "electronics": {
+        "tC1": {"min": 0, "max": 11, "default": 4},
+        "tC2": {"min": 0, "max": 20, "default": 6},
+        "abs": {"min": 1, "max": 11, "default": 3},
+        "brakeBias": {"min": 50.0, "max": 80.0, "default": 67.0}
+      },
+      "aero": {
+        "splitter": {"min": 0, "max": 5, "default": 2},
+        "wing": {"min": 0, "max": 12, "default": 6},
+        "rideHeightFront": {"min": 50, "max": 120, "default": 68},
+        "rideHeightRear": {"min": 55, "max": 120, "default": 73}
+      },
+      "mechanicalGrip": {
+        "ARBFront": {"min": 0, "max": 30, "default": 17},
+        "ARBRear": {"min": 0, "max": 30, "default": 21},
+        "preload": {"min": 20, "max": 200, "default": 85}
+      },
+      "dampers": {
+        "bumpSlow": {"min": 5, "max": 40, "default": 20},
+        "reboundSlow": {"min": 5, "max": 40, "default": 25}
+      }
+    }
+  },
+  {
+    "carId": "ferrari_488_gt3_evo",
+    "carName": "Ferrari 488 GT3 Evo",
+    "carModelYear": 2020,
+    "carClass": "GT3",
+    "wheelbase": 2.650,
+    "setupParameters": {
+      "tyres": {
+        "pressureLF": {"min": 24.0, "max": 32.0, "default": 27.6},
+        "pressureRF": {"min": 24.0, "max": 32.0, "default": 27.6},
+        "pressureLR": {"min": 24.0, "max": 32.0, "default": 27.0},
+        "pressureRR": {"min": 24.0, "max": 32.0, "default": 27.0},
+        "camberFront": {"min": -4.0, "max": -1.0, "default": -2.9},
+        "camberRear": {"min": -3.0, "max": -1.0, "default": -2.1}
+      },
+      "electronics": {
+        "tC1": {"min": 0, "max": 11, "default": 3},
+        "tC2": {"min": 0, "max": 20, "default": 5},
+        "abs": {"min": 1, "max": 11, "default": 2},
+        "brakeBias": {"min": 50.0, "max": 80.0, "default": 66.0}
+      },
+      "aero": {
+        "splitter": {"min": 0, "max": 5, "default": 2},
+        "wing": {"min": 0, "max": 12, "default": 6},
+        "rideHeightFront": {"min": 50, "max": 120, "default": 66},
+        "rideHeightRear": {"min": 55, "max": 120, "default": 71}
+      },
+      "mechanicalGrip": {
+        "ARBFront": {"min": 0, "max": 30, "default": 16},
+        "ARBRear": {"min": 0, "max": 30, "default": 19},
+        "preload": {"min": 20, "max": 200, "default": 80}
+      },
+      "dampers": {
+        "bumpSlow": {"min": 5, "max": 40, "default": 19},
+        "reboundSlow": {"min": 5, "max": 40, "default": 24}
+      }
+    }
+  },
+  {
+    "carId": "ferrari_296_gt3",
+    "carName": "Ferrari 296 GT3",
+    "carModelYear": 2023,
+    "carClass": "GT3",
+    "wheelbase": 2.670,
+    "setupParameters": {
+      "tyres": {
+        "pressureLF": {"min": 24.0, "max": 32.0, "default": 27.4},
+        "pressureRF": {"min": 24.0, "max": 32.0, "default": 27.4},
+        "pressureLR": {"min": 24.0, "max": 32.0, "default": 26.8},
+        "pressureRR": {"min": 24.0, "max": 32.0, "default": 26.8},
+        "camberFront": {"min": -4.0, "max": -1.0, "default": -2.7},
+        "camberRear": {"min": -3.0, "max": -1.0, "default": -1.9}
+      },
+      "electronics": {
+        "tC1": {"min": 0, "max": 11, "default": 2},
+        "tC2": {"min": 0, "max": 20, "default": 4},
+        "abs": {"min": 1, "max": 11, "default": 1},
+        "brakeBias": {"min": 50.0, "max": 80.0, "default": 65.0}
+      },
+      "aero": {
+        "splitter": {"min": 0, "max": 5, "default": 2},
+        "wing": {"min": 0, "max": 12, "default": 5},
+        "rideHeightFront": {"min": 50, "max": 120, "default": 62},
+        "rideHeightRear": {"min": 55, "max": 120, "default": 67}
+      },
+      "mechanicalGrip": {
+        "ARBFront": {"min": 0, "max": 30, "default": 13},
+        "ARBRear": {"min": 0, "max": 30, "default": 17},
+        "preload": {"min": 20, "max": 200, "default": 55}
+      },
+      "dampers": {
+        "bumpSlow": {"min": 5, "max": 40, "default": 15},
+        "reboundSlow": {"min": 5, "max": 40, "default": 20}
+      }
+    }
+  },
+  {
+    "carId": "lamborghini_huracan_gt3",
+    "carName": "Lamborghini Huracán GT3",
+    "carModelYear": 2015,
+    "carClass": "GT3",
+    "wheelbase": 2.620,
+    "setupParameters": {
+      "tyres": {
+        "pressureLF": {"min": 24.0, "max": 32.0, "default": 27.5},
+        "pressureRF": {"min": 24.0, "max": 32.0, "default": 27.5},
+        "pressureLR": {"min": 24.0, "max": 32.0, "default": 26.9},
+        "pressureRR": {"min": 24.0, "max": 32.0, "default": 26.9},
+        "camberFront": {"min": -4.0, "max": -1.0, "default": -2.8},
+        "camberRear": {"min": -3.0, "max": -1.0, "default": -2.0}
+      },
+      "electronics": {
+        "tC1": {"min": 0, "max": 11, "default": 4},
+        "tC2": {"min": 0, "max": 20, "default": 6},
+        "abs": {"min": 1, "max": 11, "default": 3},
+        "brakeBias": {"min": 50.0, "max": 80.0, "default": 68.0}
+      },
+      "aero": {
+        "splitter": {"min": 0, "max": 5, "default": 2},
+        "wing": {"min": 0, "max": 12, "default": 6},
+        "rideHeightFront": {"min": 50, "max": 120, "default": 69},
+        "rideHeightRear": {"min": 55, "max": 120, "default": 74}
+      },
+      "mechanicalGrip": {
+        "ARBFront": {"min": 0, "max": 30, "default": 18},
+        "ARBRear": {"min": 0, "max": 30, "default": 22},
+        "preload": {"min": 20, "max": 200, "default": 90}
+      },
+      "dampers": {
+        "bumpSlow": {"min": 5, "max": 40, "default": 21},
+        "reboundSlow": {"min": 5, "max": 40, "default": 26}
+      }
+    }
+  },
+  {
+    "carId": "lamborghini_huracan_gt3_evo",
+    "carName": "Lamborghini Huracán GT3 Evo",
+    "carModelYear": 2019,
+    "carClass": "GT3",
+    "wheelbase": 2.620,
+    "setupParameters": {
+      "tyres": {
+        "pressureLF": {"min": 24.0, "max": 32.0, "default": 27.4},
+        "pressureRF": {"min": 24.0, "max": 32.0, "default": 27.4},
+        "pressureLR": {"min": 24.0, "max": 32.0, "default": 26.9},
+        "pressureRR": {"min": 24.0, "max": 32.0, "default": 26.9},
+        "camberFront": {"min": -4.0, "max": -1.0, "default": -2.9},
+        "camberRear": {"min": -3.0, "max": -1.0, "default": -2.1}
+      },
+      "electronics": {
+        "tC1": {"min": 0, "max": 11, "default": 3},
+        "tC2": {"min": 0, "max": 20, "default": 5},
+        "abs": {"min": 1, "max": 11, "default": 2},
+        "brakeBias": {"min": 50.0, "max": 80.0, "default": 67.0}
+      },
+      "aero": {
+        "splitter": {"min": 0, "max": 5, "default": 2},
+        "wing": {"min": 0, "max": 12, "default": 5},
+        "rideHeightFront": {"min": 50, "max": 120, "default": 67},
+        "rideHeightRear": {"min": 55, "max": 120, "default": 72}
+      },
+      "mechanicalGrip": {
+        "ARBFront": {"min": 0, "max": 30, "default": 17},
+        "ARBRear": {"min": 0, "max": 30, "default": 21},
+        "preload": {"min": 20, "max": 200, "default": 85}
+      },
+      "dampers": {
+        "bumpSlow": {"min": 5, "max": 40, "default": 20},
+        "reboundSlow": {"min": 5, "max": 40, "default": 25}
+      }
+    }
+  },
+  {
+    "carId": "lamborghini_huracan_gt3_evo2",
+    "carName": "Lamborghini Huracán GT3 Evo2",
+    "carModelYear": 2023,
+    "carClass": "GT3",
+    "wheelbase": 2.620,
+    "setupParameters": {
+      "tyres": {
+        "pressureLF": {"min": 24.0, "max": 32.0, "default": 27.2},
+        "pressureRF": {"min": 24.0, "max": 32.0, "default": 27.2},
+        "pressureLR": {"min": 24.0, "max": 32.0, "default": 26.7},
+        "pressureRR": {"min": 24.0, "max": 32.0, "default": 26.7},
+        "camberFront": {"min": -4.0, "max": -1.0, "default": -2.7},
+        "camberRear": {"min": -3.0, "max": -1.0, "default": -1.9}
+      },
+      "electronics": {
+        "tC1": {"min": 0, "max": 11, "default": 2},
+        "tC2": {"min": 0, "max": 20, "default": 4},
+        "abs": {"min": 1, "max": 11, "default": 1},
+        "brakeBias": {"min": 50.0, "max": 80.0, "default": 66.0}
+      },
+      "aero": {
+        "splitter": {"min": 0, "max": 5, "default": 2},
+        "wing": {"min": 0, "max": 12, "default": 4},
+        "rideHeightFront": {"min": 50, "max": 120, "default": 65},
+        "rideHeightRear": {"min": 55, "max": 120, "default": 70}
+      },
+      "mechanicalGrip": {
+        "ARBFront": {"min": 0, "max": 30, "default": 15},
+        "ARBRear": {"min": 0, "max": 30, "default": 19},
+        "preload": {"min": 20, "max": 200, "default": 75}
+      },
+      "dampers": {
+        "bumpSlow": {"min": 5, "max": 40, "default": 18},
+        "reboundSlow": {"min": 5, "max": 40, "default": 23}
+      }
+    }
+  },
+  {
+    "carId": "mclaren_650s_gt3",
+    "carName": "McLaren 650S GT3",
+    "carModelYear": 2015,
+    "carClass": "GT3",
+    "wheelbase": 2.670,
+    "setupParameters": {
+      "tyres": {
+        "pressureLF": {"min": 24.0, "max": 32.0, "default": 27.8},
+        "pressureRF": {"min": 24.0, "max": 32.0, "default": 27.8},
+        "pressureLR": {"min": 24.0, "max": 32.0, "default": 27.2},
+        "pressureRR": {"min": 24.0, "max": 32.0, "default": 27.2},
+        "camberFront": {"min": -4.0, "max": -1.0, "default": -2.7},
+        "camberRear": {"min": -3.0, "max": -1.0, "default": -1.9}
+      },
+      "electronics": {
+        "tC1": {"min": 0, "max": 11, "default": 5},
+        "tC2": {"min": 0, "max": 20, "default": 7},
+        "abs": {"min": 1, "max": 11, "default": 4},
+        "brakeBias": {"min": 50.0, "max": 80.0, "default": 64.0}
+      },
+      "aero": {
+        "splitter": {"min": 0, "max": 5, "default": 2},
+        "wing": {"min": 0, "max": 12, "default": 7},
+        "rideHeightFront": {"min": 50, "max": 120, "default": 64},
+        "rideHeightRear": {"min": 55, "max": 120, "default": 69}
+      },
+      "mechanicalGrip": {
+        "ARBFront": {"min": 0, "max": 30, "default": 14},
+        "ARBRear": {"min": 0, "max": 30, "default": 18},
+        "preload": {"min": 20, "max": 200, "default": 70}
+      },
+      "dampers": {
+        "bumpSlow": {"min": 5, "max": 40, "default": 17},
+        "reboundSlow": {"min": 5, "max": 40, "default": 22}
+      }
+    }
+  },
+  {
+    "carId": "mclaren_720s_gt3",
+    "carName": "McLaren 720S GT3",
+    "carModelYear": 2019,
+    "carClass": "GT3",
+    "wheelbase": 2.670,
+    "setupParameters": {
+      "tyres": {
+        "pressureLF": {"min": 24.0, "max": 32.0, "default": 27.7},
+        "pressureRF": {"min": 24.0, "max": 32.0, "default": 27.7},
+        "pressureLR": {"min": 24.0, "max": 32.0, "default": 27.1},
+        "pressureRR": {"min": 24.0, "max": 32.0, "default": 27.1},
+        "camberFront": {"min": -4.0, "max": -1.0, "default": -2.8},
+        "camberRear": {"min": -3.0, "max": -1.0, "default": -2.0}
+      },
+      "electronics": {
+        "tC1": {"min": 0, "max": 11, "default": 4},
+        "tC2": {"min": 0, "max": 20, "default": 6},
+        "abs": {"min": 1, "max": 11, "default": 3},
+        "brakeBias": {"min": 50.0, "max": 80.0, "default": 63.0}
+      },
+      "aero": {
+        "splitter": {"min": 0, "max": 5, "default": 2},
+        "wing": {"min": 0, "max": 12, "default": 6},
+        "rideHeightFront": {"min": 50, "max": 120, "default": 63},
+        "rideHeightRear": {"min": 55, "max": 120, "default": 68}
+      },
+      "mechanicalGrip": {
+        "ARBFront": {"min": 0, "max": 30, "default": 13},
+        "ARBRear": {"min": 0, "max": 30, "default": 17},
+        "preload": {"min": 20, "max": 200, "default": 65}
+      },
+      "dampers": {
+        "bumpSlow": {"min": 5, "max": 40, "default": 16},
+        "reboundSlow": {"min": 5, "max": 40, "default": 21}
+      }
+    }
+  },
+  {
+    "carId": "mclaren_720s_gt3_evo",
+    "carName": "McLaren 720S GT3 Evo",
+    "carModelYear": 2023,
+    "carClass": "GT3",
+    "wheelbase": 2.670,
+    "setupParameters": {
+      "tyres": {
+        "pressureLF": {"min": 24.0, "max": 32.0, "default": 27.5},
+        "pressureRF": {"min": 24.0, "max": 32.0, "default": 27.5},
+        "pressureLR": {"min": 24.0, "max": 32.0, "default": 26.9},
+        "pressureRR": {"min": 24.0, "max": 32.0, "default": 26.9},
+        "camberFront": {"min": -4.0, "max": -1.0, "default": -2.6},
+        "camberRear": {"min": -3.0, "max": -1.0, "default": -1.8}
+      },
+      "electronics": {
+        "tC1": {"min": 0, "max": 11, "default": 3},
+        "tC2": {"min": 0, "max": 20, "default": 5},
+        "abs": {"min": 1, "max": 11, "default": 2},
+        "brakeBias": {"min": 50.0, "max": 80.0, "default": 62.0}
+      },
+      "aero": {
+        "splitter": {"min": 0, "max": 5, "default": 2},
+        "wing": {"min": 0, "max": 12, "default": 5},
+        "rideHeightFront": {"min": 50, "max": 120, "default": 61},
+        "rideHeightRear": {"min": 55, "max": 120, "default": 66}
+      },
+      "mechanicalGrip": {
+        "ARBFront": {"min": 0, "max": 30, "default": 12},
+        "ARBRear": {"min": 0, "max": 30, "default": 16},
+        "preload": {"min": 20, "max": 200, "default": 60}
+      },
+      "dampers": {
+        "bumpSlow": {"min": 5, "max": 40, "default": 15},
+        "reboundSlow": {"min": 5, "max": 40, "default": 20}
+      }
+    }
+  },
+  {
+    "carId": "porsche_911_gt3_r",
+    "carName": "Porsche 911 GT3 R",
+    "carModelYear": 2018,
+    "carClass": "GT3",
+    "wheelbase": 2.450,
+    "setupParameters": {
+      "tyres": {
+        "pressureLF": {"min": 24.0, "max": 32.0, "default": 27.0},
+        "pressureRF": {"min": 24.0, "max": 32.0, "default": 27.0},
+        "pressureLR": {"min": 24.0, "max": 32.0, "default": 26.5},
+        "pressureRR": {"min": 24.0, "max": 32.0, "default": 26.5},
+        "camberFront": {"min": -4.0, "max": -1.0, "default": -2.5},
+        "camberRear": {"min": -3.0, "max": -1.0, "default": -1.7}
+      },
+      "electronics": {
+        "tC1": {"min": 0, "max": 11, "default": 6},
+        "tC2": {"min": 0, "max": 20, "default": 8},
+        "abs": {"min": 1, "max": 11, "default": 5},
+        "brakeBias": {"min": 50.0, "max": 80.0, "default": 58.0}
+      },
+      "aero": {
+        "splitter": {"min": 0, "max": 5, "default": 3},
+        "wing": {"min": 0, "max": 12, "default": 8},
+        "rideHeightFront": {"min": 50, "max": 120, "default": 70},
+        "rideHeightRear": {"min": 55, "max": 120, "default": 75}
+      },
+      "mechanicalGrip": {
+        "ARBFront": {"min": 0, "max": 30, "default": 10},
+        "ARBRear": {"min": 0, "max": 30, "default": 14},
+        "preload": {"min": 20, "max": 200, "default": 100}
+      },
+      "dampers": {
+        "bumpSlow": {"min": 5, "max": 40, "default": 24},
+        "reboundSlow": {"min": 5, "max": 40, "default": 29}
+      }
+    }
+  },
+  {
+    "carId": "porsche_991ii_gt3_r",
+    "carName": "Porsche 911 II GT3 R",
+    "carModelYear": 2019,
+    "carClass": "GT3",
+    "wheelbase": 2.450,
+    "setupParameters": {
+      "tyres": {
+        "pressureLF": {"min": 24.0, "max": 32.0, "default": 26.8},
+        "pressureRF": {"min": 24.0, "max": 32.0, "default": 26.8},
+        "pressureLR": {"min": 24.0, "max": 32.0, "default": 26.3},
+        "pressureRR": {"min": 24.0, "max": 32.0, "default": 26.3},
+        "camberFront": {"min": -4.0, "max": -1.0, "default": -2.6},
+        "camberRear": {"min": -3.0, "max": -1.0, "default": -1.8}
+      },
+      "electronics": {
+        "tC1": {"min": 0, "max": 11, "default": 5},
+        "tC2": {"min": 0, "max": 20, "default": 7},
+        "abs": {"min": 1, "max": 11, "default": 4},
+        "brakeBias": {"min": 50.0, "max": 80.0, "default": 57.0}
+      },
+      "aero": {
+        "splitter": {"min": 0, "max": 5, "default": 3},
+        "wing": {"min": 0, "max": 12, "default": 7},
+        "rideHeightFront": {"min": 50, "max": 120, "default": 68},
+        "rideHeightRear": {"min": 55, "max": 120, "default": 73}
+      },
+      "mechanicalGrip": {
+        "ARBFront": {"min": 0, "max": 30, "default": 9},
+        "ARBRear": {"min": 0, "max": 30, "default": 13},
+        "preload": {"min": 20, "max": 200, "default": 95}
+      },
+      "dampers": {
+        "bumpSlow": {"min": 5, "max": 40, "default": 23},
+        "reboundSlow": {"min": 5, "max": 40, "default": 28}
+      }
+    }
+  },
+  {
+    "carId": "nissan_gt_r_gt3_2018",
+    "carName": "Nissan GT-R Nismo GT3",
+    "carModelYear": 2018,
+    "carClass": "GT3",
+    "wheelbase": 2.780,
+    "setupParameters": {
+      "tyres": {
+        "pressureLF": {"min": 24.0, "max": 32.0, "default": 27.3},
+        "pressureRF": {"min": 24.0, "max": 32.0, "default": 27.3},
+        "pressureLR": {"min": 24.0, "max": 32.0, "default": 26.8},
+        "pressureRR": {"min": 24.0, "max": 32.0, "default": 26.8},
+        "camberFront": {"min": -4.0, "max": -1.0, "default": -2.8},
+        "camberRear": {"min": -3.0, "max": -1.0, "default": -2.0}
+      },
+      "electronics": {
+        "tC1": {"min": 0, "max": 11, "default": 4},
+        "tC2": {"min": 0, "max": 20, "default": 6},
+        "abs": {"min": 1, "max": 11, "default": 3},
+        "brakeBias": {"min": 50.0, "max": 80.0, "default": 61.0}
+      },
+      "aero": {
+        "splitter": {"min": 0, "max": 5, "default": 2},
+        "wing": {"min": 0, "max": 12, "default": 6},
+        "rideHeightFront": {"min": 50, "max": 120, "default": 66},
+        "rideHeightRear": {"min": 55, "max": 120, "default": 71}
+      },
+      "mechanicalGrip": {
+        "ARBFront": {"min": 0, "max": 30, "default": 15},
+        "ARBRear": {"min": 0, "max": 30, "default": 19},
+        "preload": {"min": 20, "max": 200, "default": 85}
+      },
+      "dampers": {
+        "bumpSlow": {"min": 5, "max": 40, "default": 20},
+        "reboundSlow": {"min": 5, "max": 40, "default": 25}
+      }
+    }
+  },
+  {
+    "carId": "lexus_rc_f_gt3",
+    "carName": "Lexus RC F GT3",
+    "carModelYear": 2016,
+    "carClass": "GT3",
+    "wheelbase": 2.730,
+    "setupParameters": {
+      "tyres": {
+        "pressureLF": {"min": 24.0, "max": 32.0, "default": 27.4},
+        "pressureRF": {"min": 24.0, "max": 32.0, "default": 27.4},
+        "pressureLR": {"min": 24.0, "max": 32.0, "default": 26.9},
+        "pressureRR": {"min": 24.0, "max": 32.0, "default": 26.9},
+        "camberFront": {"min": -4.0, "max": -1.0, "default": -2.7},
+        "camberRear": {"min": -3.0, "max": -1.0, "default": -1.9}
+      },
+      "electronics": {
+        "tC1": {"min": 0, "max": 11, "default": 5},
+        "tC2": {"min": 0, "max": 20, "default": 7},
+        "abs": {"min": 1, "max": 11, "default": 4},
+        "brakeBias": {"min": 50.0, "max": 80.0, "default": 63.0}
+      },
+      "aero": {
+        "splitter": {"min": 0, "max": 5, "default": 2},
+        "wing": {"min": 0, "max": 12, "default": 7},
+        "rideHeightFront": {"min": 50, "max": 120, "default": 65},
+        "rideHeightRear": {"min": 55, "max": 120, "default": 70}
+      },
+      "mechanicalGrip": {
+        "ARBFront": {"min": 0, "max": 30, "default": 14},
+        "ARBRear": {"min": 0, "max": 30, "default": 18},
+        "preload": {"min": 20, "max": 200, "default": 80}
+      },
+      "dampers": {
+        "bumpSlow": {"min": 5, "max": 40, "default": 19},
+        "reboundSlow": {"min": 5, "max": 40, "default": 24}
+      }
+    }
+  },
+  {
+    "carId": "honda_nsx_gt3_evo",
+    "carName": "Honda NSX GT3 Evo",
+    "carModelYear": 2019,
+    "carClass": "GT3",
+    "wheelbase": 2.630,
+    "setupParameters": {
+      "tyres": {
+        "pressureLF": {"min": 24.0, "max": 32.0, "default": 27.6},
+        "pressureRF": {"min": 24.0, "max": 32.0, "default": 27.6},
+        "pressureLR": {"min": 24.0, "max": 32.0, "default": 27.0},
+        "pressureRR": {"min": 24.0, "max": 32.0, "default": 27.0},
+        "camberFront": {"min": -4.0, "max": -1.0, "default": -2.8},
+        "camberRear": {"min": -3.0, "max": -1.0, "default": -2.0}
+      },
+      "electronics": {
+        "tC1": {"min": 0, "max": 11, "default": 4},
+        "tC2": {"min": 0, "max": 20, "default": 6},
+        "abs": {"min": 1, "max": 11, "default": 3},
+        "brakeBias": {"min": 50.0, "max": 80.0, "default": 64.0}
+      },
+      "aero": {
+        "splitter": {"min": 0, "max": 5, "default": 2},
+        "wing": {"min": 0, "max": 12, "default": 6},
+        "rideHeightFront": {"min": 50, "max": 120, "default": 67},
+        "rideHeightRear": {"min": 55, "max": 120, "default": 72}
+      },
+      "mechanicalGrip": {
+        "ARBFront": {"min": 0, "max": 30, "default": 16},
+        "ARBRear": {"min": 0, "max": 30, "default": 20},
+        "preload": {"min": 20, "max": 200, "default": 75}
+      },
+      "dampers": {
+        "bumpSlow": {"min": 5, "max": 40, "default": 18},
+        "reboundSlow": {"min": 5, "max": 40, "default": 23}
+      }
+    }
+  },
+  {
+    "carId": "alpine_a110_gt4",
+    "carName": "Alpine A110 GT4",
+    "carModelYear": 2018,
+    "carClass": "GT4",
+    "wheelbase": 2.420,
+    "setupParameters": {
+      "tyres": {
+        "pressureLF": {"min": 24.0, "max": 32.0, "default": 26.5},
+        "pressureRF": {"min": 24.0, "max": 32.0, "default": 26.5},
+        "pressureLR": {"min": 24.0, "max": 32.0, "default": 26.0},
+        "pressureRR": {"min": 24.0, "max": 32.0, "default": 26.0},
+        "camberFront": {"min": -3.5, "max": -1.0, "default": -2.5},
+        "camberRear": {"min": -2.5, "max": -1.0, "default": -1.8}
+      },
+      "electronics": {
+        "tC1": {"min": 0, "max": 11, "default": 3},
+        "tC2": {"min": 0, "max": 20, "default": 5},
+        "abs": {"min": 1, "max": 11, "default": 2},
+        "brakeBias": {"min": 50.0, "max": 80.0, "default": 60.0}
+      },
+      "aero": {
+        "splitter": {"min": 0, "max": 3, "default": 1},
+        "wing": {"min": 0, "max": 8, "default": 4},
+        "rideHeightFront": {"min": 55, "max": 125, "default": 75},
+        "rideHeightRear": {"min": 60, "max": 125, "default": 80}
+      },
+      "mechanicalGrip": {
+        "ARBFront": {"min": 0, "max": 25, "default": 12},
+        "ARBRear": {"min": 0, "max": 25, "default": 15},
+        "preload": {"min": 15, "max": 150, "default": 60}
+      },
+      "dampers": {
+        "bumpSlow": {"min": 5, "max": 35, "default": 15},
+        "reboundSlow": {"min": 5, "max": 35, "default": 20}
+      }
+    }
+  },
+  {
+    "carId": "bmw_m4_gt4",
+    "carName": "BMW M4 GT4",
+    "carModelYear": 2018,
+    "carClass": "GT4",
+    "wheelbase": 2.810,
+    "setupParameters": {
+      "tyres": {
+        "pressureLF": {"min": 24.0, "max": 32.0, "default": 26.8},
+        "pressureRF": {"min": 24.0, "max": 32.0, "default": 26.8},
+        "pressureLR": {"min": 24.0, "max": 32.0, "default": 26.2},
+        "pressureRR": {"min": 24.0, "max": 32.0, "default": 26.2},
+        "camberFront": {"min": -3.5, "max": -1.0, "default": -2.4},
+        "camberRear": {"min": -2.5, "max": -1.0, "default": -1.7}
+      },
+      "electronics": {
+        "tC1": {"min": 0, "max": 11, "default": 4},
+        "tC2": {"min": 0, "max": 20, "default": 6},
+        "abs": {"min": 1, "max": 11, "default": 3},
+        "brakeBias": {"min": 50.0, "max": 80.0, "default": 58.0}
+      },
+      "aero": {
+        "splitter": {"min": 0, "max": 3, "default": 1},
+        "wing": {"min": 0, "max": 10, "default": 5},
+        "rideHeightFront": {"min": 52, "max": 120, "default": 72},
+        "rideHeightRear": {"min": 56, "max": 120, "default": 77}
+      },
+      "mechanicalGrip": {
+        "ARBFront": {"min": 0, "max": 25, "default": 10},
+        "ARBRear": {"min": 0, "max": 25, "default": 13},
+        "preload": {"min": 15, "max": 150, "default": 70}
+      },
+      "dampers": {
+        "bumpSlow": {"min": 5, "max": 35, "default": 18},
+        "reboundSlow": {"min": 5, "max": 35, "default": 23}
+      }
+    }
+  },
+  {
+    "carId": "porsche_718_cayman_gt4_clubsport",
+    "carName": "Porsche 718 Cayman GT4 Clubsport",
+    "carModelYear": 2019,
+    "carClass": "GT4",
+    "wheelbase": 2.475,
+    "setupParameters": {
+      "tyres": {
+        "pressureLF": {"min": 24.0, "max": 32.0, "default": 26.2},
+        "pressureRF": {"min": 24.0, "max": 32.0, "default": 26.2},
+        "pressureLR": {"min": 24.0, "max": 32.0, "default": 25.8},
+        "pressureRR": {"min": 24.0, "max": 32.0, "default": 25.8},
+        "camberFront": {"min": -3.5, "max": -1.0, "default": -2.2},
+        "camberRear": {"min": -2.5, "max": -1.0, "default": -1.5}
+      },
+      "electronics": {
+        "tC1": {"min": 0, "max": 11, "default": 5},
+        "tC2": {"min": 0, "max": 20, "default": 7},
+        "abs": {"min": 1, "max": 11, "default": 4},
+        "brakeBias": {"min": 50.0, "max": 80.0, "default": 55.0}
+      },
+      "aero": {
+        "splitter": {"min": 0, "max": 4, "default": 2},
+        "wing": {"min": 0, "max": 9, "default": 5},
+        "rideHeightFront": {"min": 55, "max": 125, "default": 78},
+        "rideHeightRear": {"min": 60, "max": 125, "default": 83}
+      },
+      "mechanicalGrip": {
+        "ARBFront": {"min": 0, "max": 25, "default": 8},
+        "ARBRear": {"min": 0, "max": 25, "default": 11},
+        "preload": {"min": 15, "max": 150, "default": 80}
+      },
+      "dampers": {
+        "bumpSlow": {"min": 5, "max": 35, "default": 20},
+        "reboundSlow": {"min": 5, "max": 35, "default": 25}
+      }
+    }
+  },
+  {
+    "carId": "mclaren_570s_gt4",
+    "carName": "McLaren 570S GT4",
+    "carModelYear": 2016,
+    "carClass": "GT4",
+    "wheelbase": 2.670,
+    "setupParameters": {
+      "tyres": {
+        "pressureLF": {"min": 24.0, "max": 32.0, "default": 26.7},
+        "pressureRF": {"min": 24.0, "max": 32.0, "default": 26.7},
+        "pressureLR": {"min": 24.0, "max": 32.0, "default": 26.1},
+        "pressureRR": {"min": 24.0, "max": 32.0, "default": 26.1},
+        "camberFront": {"min": -3.5, "max": -1.0, "default": -2.6},
+        "camberRear": {"min": -2.5, "max": -1.0, "default": -1.8}
+      },
+      "electronics": {
+        "tC1": {"min": 0, "max": 11, "default": 3},
+        "tC2": {"min": 0, "max": 20, "default": 5},
+        "abs": {"min": 1, "max": 11, "default": 2},
+        "brakeBias": {"min": 50.0, "max": 80.0, "default": 62.0}
+      },
+      "aero": {
+        "splitter": {"min": 0, "max": 3, "default": 1},
+        "wing": {"min": 0, "max": 8, "default": 4},
+        "rideHeightFront": {"min": 55, "max": 125, "default": 73},
+        "rideHeightRear": {"min": 60, "max": 125, "default": 78}
+      },
+      "mechanicalGrip": {
+        "ARBFront": {"min": 0, "max": 25, "default": 11},
+        "ARBRear": {"min": 0, "max": 25, "default": 14},
+        "preload": {"min": 15, "max": 150, "default": 55}
+      },
+      "dampers": {
+        "bumpSlow": {"min": 5, "max": 35, "default": 14},
+        "reboundSlow": {"min": 5, "max": 35, "default": 19}
+      }
+    }
+  },
+  {
+    "carId": "mercedes_amg_gt4",
+    "carName": "Mercedes-AMG GT4",
+    "carModelYear": 2016,
+    "carClass": "GT4",
+    "wheelbase": 2.630,
+    "setupParameters": {
+      "tyres": {
+        "pressureLF": {"min": 24.0, "max": 32.0, "default": 26.9},
+        "pressureRF": {"min": 24.0, "max": 32.0, "default": 26.9},
+        "pressureLR": {"min": 24.0, "max": 32.0, "default": 26.3},
+        "pressureRR": {"min": 24.0, "max": 32.0, "default": 26.3},
+        "camberFront": {"min": -3.5, "max": -1.0, "default": -2.5},
+        "camberRear": {"min": -2.5, "max": -1.0, "default": -1.7}
+      },
+      "electronics": {
+        "tC1": {"min": 0, "max": 11, "default": 3},
+        "tC2": {"min": 0, "max": 20, "default": 5},
+        "abs": {"min": 1, "max": 11, "default": 2},
+        "brakeBias": {"min": 50.0, "max": 80.0, "default": 61.0}
+      },
+      "aero": {
+        "splitter": {"min": 0, "max": 3, "default": 1},
+        "wing": {"min": 0, "max": 8, "default": 4},
+        "rideHeightFront": {"min": 55, "max": 125, "default": 74},
+        "rideHeightRear": {"min": 60, "max": 125, "default": 79}
+      },
+      "mechanicalGrip": {
+        "ARBFront": {"min": 0, "max": 25, "default": 12},
+        "ARBRear": {"min": 0, "max": 25, "default": 15},
+        "preload": {"min": 15, "max": 150, "default": 65}
+      },
+      "dampers": {
+        "bumpSlow": {"min": 5, "max": 35, "default": 16},
+        "reboundSlow": {"min": 5, "max": 35, "default": 21}
+      }
+    }
+  },
+  {
+    "carId": "audi_r8_lms_gt2",
+    "carName": "Audi R8 LMS GT2",
+    "carModelYear": 2021,
+    "carClass": "GT2",
+    "wheelbase": 2.650,
+    "setupParameters": {
+      "tyres": {
+        "pressureLF": {"min": 22.0, "max": 30.0, "default": 25.5},
+        "pressureRF": {"min": 22.0, "max": 30.0, "default": 25.5},
+        "pressureLR": {"min": 22.0, "max": 30.0, "default": 25.0},
+        "pressureRR": {"min": 22.0, "max": 30.0, "default": 25.0},
+        "camberFront": {"min": -4.5, "max": -1.0, "default": -3.2},
+        "camberRear": {"min": -3.5, "max": -1.0, "default": -2.5}
+      },
+      "electronics": {
+        "tC1": {"min": 0, "max": 11, "default": 2},
+        "tC2": {"min": 0, "max": 20, "default": 3},
+        "abs": {"min": 1, "max": 11, "default": 1},
+        "brakeBias": {"min": 50.0, "max": 80.0, "default": 68.0}
+      },
+      "aero": {
+        "splitter": {"min": 0, "max": 6, "default": 3},
+        "wing": {"min": 0, "max": 15, "default": 8},
+        "rideHeightFront": {"min": 45, "max": 110, "default": 55},
+        "rideHeightRear": {"min": 50, "max": 110, "default": 60}
+      },
+      "mechanicalGrip": {
+        "ARBFront": {"min": 0, "max": 35, "default": 18},
+        "ARBRear": {"min": 0, "max": 35, "default": 22},
+        "preload": {"min": 25, "max": 250, "default": 90}
+      },
+      "dampers": {
+        "bumpSlow": {"min": 5, "max": 45, "default": 22},
+        "reboundSlow": {"min": 5, "max": 45, "default": 27}
+      }
+    }
+  },
+  {
+    "carId": "mercedes_amg_gt2",
+    "carName": "Mercedes-AMG GT2",
+    "carModelYear": 2021,
+    "carClass": "GT2",
+    "wheelbase": 2.665,
+    "setupParameters": {
+      "tyres": {
+        "pressureLF": {"min": 22.0, "max": 30.0, "default": 25.2},
+        "pressureRF": {"min": 22.0, "max": 30.0, "default": 25.2},
+        "pressureLR": {"min": 22.0, "max": 30.0, "default": 24.8},
+        "pressureRR": {"min": 22.0, "max": 30.0, "default": 24.8},
+        "camberFront": {"min": -4.5, "max": -1.0, "default": -3.0},
+        "camberRear": {"min": -3.5, "max": -1.0, "default": -2.3}
+      },
+      "electronics": {
+        "tC1": {"min": 0, "max": 11, "default": 1},
+        "tC2": {"min": 0, "max": 20, "default": 2},
+        "abs": {"min": 1, "max": 11, "default": 1},
+        "brakeBias": {"min": 50.0, "max": 80.0, "default": 66.0}
+      },
+      "aero": {
+        "splitter": {"min": 0, "max": 6, "default": 3},
+        "wing": {"min": 0, "max": 15, "default": 7},
+        "rideHeightFront": {"min": 45, "max": 110, "default": 53},
+        "rideHeightRear": {"min": 50, "max": 110, "default": 58}
+      },
+      "mechanicalGrip": {
+        "ARBFront": {"min": 0, "max": 35, "default": 16},
+        "ARBRear": {"min": 0, "max": 35, "default": 20},
+        "preload": {"min": 25, "max": 250, "default": 75}
+      },
+      "dampers": {
+        "bumpSlow": {"min": 5, "max": 45, "default": 20},
+        "reboundSlow": {"min": 5, "max": 45, "default": 25}
+      }
+    }
+  },
+  {
+    "carId": "porsche_911_gt2_rs_cs_evo",
+    "carName": "Porsche 911 GT2 RS Clubsport Evo",
+    "carModelYear": 2021,
+    "carClass": "GT2",
+    "wheelbase": 2.450,
+    "setupParameters": {
+      "tyres": {
+        "pressureLF": {"min": 22.0, "max": 30.0, "default": 24.8},
+        "pressureRF": {"min": 22.0, "max": 30.0, "default": 24.8},
+        "pressureLR": {"min": 22.0, "max": 30.0, "default": 24.3},
+        "pressureRR": {"min": 22.0, "max": 30.0, "default": 24.3},
+        "camberFront": {"min": -4.5, "max": -1.0, "default": -2.8},
+        "camberRear": {"min": -3.5, "max": -1.0, "default": -2.0}
+      },
+      "electronics": {
+        "tC1": {"min": 0, "max": 11, "default": 3},
+        "tC2": {"min": 0, "max": 20, "default": 4},
+        "abs": {"min": 1, "max": 11, "default": 2},
+        "brakeBias": {"min": 50.0, "max": 80.0, "default": 60.0}
+      },
+      "aero": {
+        "splitter": {"min": 0, "max": 6, "default": 4},
+        "wing": {"min": 0, "max": 15, "default": 9},
+        "rideHeightFront": {"min": 45, "max": 110, "default": 58},
+        "rideHeightRear": {"min": 50, "max": 110, "default": 63}
+      },
+      "mechanicalGrip": {
+        "ARBFront": {"min": 0, "max": 35, "default": 12},
+        "ARBRear": {"min": 0, "max": 35, "default": 16},
+        "preload": {"min": 25, "max": 250, "default": 110}
+      },
+      "dampers": {
+        "bumpSlow": {"min": 5, "max": 45, "default": 26},
+        "reboundSlow": {"min": 5, "max": 45, "default": 31}
+      }
+    }
+  }
+]
