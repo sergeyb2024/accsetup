@@ -932,8 +932,28 @@ class ACCTelemetryApp {
         
         return groups;
     }
-    processCornerGroup(groups, groupData) { const maxG = Math.max(...groupData.map(p => Math.abs(p.G_LAT))); const avgUsos = groupData.reduce((s, p) => s + p.understeerAngle, 0) / groupData.length; groups.push({ maxLateralG: maxG, avgUsos: avgUsos, classification: avgUsos < this.analysisThresholds.understeer ? 'understeer' : (avgUsos > this.analysisThresholds.oversteer ? 'oversteer' : 'neutral'), }); }
-    
+    processCornerGroup(groups, groupData) {
+        const maxG = Math.max(...groupData.map(p => Math.abs(p.G_LAT)));
+        const avgUsos = groupData.reduce((s, p) => s + p.understeerAngle, 0) / groupData.length;
+
+        // Determine classification by dominant characteristic, not just average
+        const understeerPoints = groupData.filter(p => p.classification === 'understeer').length;
+        const oversteerPoints = groupData.filter(p => p.classification === 'oversteer').length;
+        
+        let dominantClassification = 'neutral';
+        if (understeerPoints > oversteerPoints && understeerPoints > groupData.length / 3) {
+            dominantClassification = 'understeer';
+        } else if (oversteerPoints > understeerPoints && oversteerPoints > groupData.length / 3) {
+            dominantClassification = 'oversteer';
+        }
+
+        groups.push({
+            maxLateralG: maxG,
+            avgUsos: avgUsos,
+            classification: dominantClassification,
+        });
+    }
+
     generateGroupedRecommendations() {
         if (!this.analysisResults) return;
         const { usosAverage, balanceDistribution } = this.analysisResults;
