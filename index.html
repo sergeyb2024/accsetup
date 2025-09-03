@@ -3,309 +3,375 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ACC Telemetry Analysis Tool</title>
+    <title>ACC Professional Telemetry Analysis - Setup JSON Upload</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <div class="container">
-        <!-- Header with Theme Toggle -->
+    <div class="app-container">
         <header class="app-header">
-            <div class="header-content">
-                <div class="header-text">
-                    <h1>ACC Telemetry Analysis Tool</h1>
-                    <p class="app-subtitle">Professional telemetry analysis for Assetto Corsa Competizione</p>
-                </div>
-                <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
-                    <span class="theme-icon">🌙</span>
-                </button>
-            </div>
-            <div class="car-info hidden" id="carInfo">
-                <div class="car-name" id="carName"></div>
-                <div class="car-class" id="carClass"></div>
+            <div class="container">
+                <h1>ACC Professional Telemetry Analysis</h1>
+                <p class="app-subtitle">Upload ACC setup JSON • Professional telemetry analysis • Comprehensive setup recommendations</p>
             </div>
         </header>
 
-        <!-- File Upload Section -->
-        <section class="upload-section">
-            <div class="upload-grid">
-                <div class="upload-area">
-                    <div class="upload-box" id="csvUpload">
-                        <div class="upload-icon">📊</div>
-                        <h3>CSV Telemetry File</h3>
-                        <p>Upload MoTeC CSV file with telemetry data</p>
-                        <input type="file" id="csvFileInput" accept=".csv" class="file-input">
-                        <button class="btn btn--outline" onclick="document.getElementById('csvFileInput').click()">
-                            Choose File
-                        </button>
-                        <div class="upload-status" id="csvStatus"></div>
-                        <div class="progress-bar" id="csvProgress">
-                            <div class="progress-fill"></div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="upload-area">
-                    <div class="upload-box" id="setupUpload">
-                        <div class="upload-icon">⚙️</div>
-                        <h3>Car Setup JSON</h3>
-                        <p>Upload car setup configuration file</p>
-                        <input type="file" id="setupFileInput" accept=".json" class="file-input">
-                        <button class="btn btn--outline" onclick="document.getElementById('setupFileInput').click()">
-                            Choose File
-                        </button>
-                        <div class="upload-status" id="setupStatus"></div>
-                        <div class="progress-bar" id="setupProgress">
-                            <div class="progress-fill"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="sample-data-section">
-                <button class="btn btn--secondary" id="loadSampleData">
-                    Load Sample Data for Demo
-                </button>
-            </div>
-        </section>
-
-        <!-- Stability Gauges Section -->
-        <section class="stability-gauges hidden" id="stabilityGauges">
-            <div class="card">
+        <main class="container">
+            <section class="card">
                 <div class="card__header">
-                    <h2>Real-Time Stability Analysis</h2>
-                    <p class="gauges-subtitle">Live car balance indicators</p>
+                    <h2>1. Car Setup Upload</h2>
+                    <div class="setup-info">
+                        <span>Upload your ACC setup JSON file to analyze alignment and current setup</span>
+                    </div>
                 </div>
                 <div class="card__body">
-                    <div class="gauges-grid">
-                        <div class="gauge-container">
-                            <div class="gauge" id="balanceGauge">
-                                <div class="gauge-needle" id="balanceNeedle"></div>
-                                <div class="gauge-labels">
-                                    <span class="gauge-label left">Understeer</span>
-                                    <span class="gauge-label right">Oversteer</span>
+                    <div class="upload-zone" id="setupUploadZone">
+                        <div class="upload-content">
+                            <div class="upload-icon">⚙️</div>
+                            <h3>Drop ACC setup JSON file here</h3>
+                            <p>Export your setup from ACC and upload the .json file</p>
+                            <input type="file" id="setupFileInput" accept=".json" class="hidden">
+                            <button class="btn btn--primary" onclick="document.getElementById('setupFileInput').click()">
+                                Browse Setup Files
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="setupInfo" class="setup-display hidden">
+                        <h3>Current Setup Analysis</h3>
+                        <div class="setup-summary" id="setupSummary">
+                            </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="card">
+                <div class="card__header">
+                    <h2>2. Telemetry Data Upload</h2>
+                </div>
+                <div class="card__body">
+                    <div class="upload-area" id="uploadArea">
+                        <div class="upload-content">
+                            <div class="upload-icon">📊</div>
+                            <p>Upload ACC telemetry CSV with comprehensive data channels</p>
+                            <p class="upload-hint">Required: SPEED, STEERANGLE, G_LAT, ROTY, THROTTLE, BRAKE<br>
+                            <strong>Enhanced channels:</strong> WHEEL_SPEED_LF, WHEEL_SPEED_RF, WHEEL_SPEED_LR, WHEEL_SPEED_RR<br>
+                            <strong>Suspension:</strong> SUSP_TRAVEL_LF/RF/LR/RR, SUSP_VEL_LF/RF/LR/RR</p>
+                            <button class="btn btn--secondary" onclick="document.getElementById('fileInput').click()">Browse Files</button>
+                            <input type="file" id="fileInput" accept=".csv" class="hidden">
+                        </div>
+                    </div>
+                    <div class="upload-actions">
+                        <button id="loadSampleBtn" class="btn btn--outline">Load Sample Data</button>
+                        <button id="processDataBtn" class="btn btn--primary hidden">Analyze Telemetry</button>
+                    </div>
+                    <div id="dataValidation" class="data-validation hidden">
+                        <h4>Data Validation</h4>
+                        <div id="validationResults"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="analysisSection" class="card hidden">
+                <div class="card__header">
+                    <h2>3. Professional Analysis Results</h2>
+                </div>
+                <div class="card__body">
+                    <div class="analysis-tabs">
+                        <button class="tab-btn active" data-tab="overview">USOS Overview</button>
+                        <button class="tab-btn" data-tab="telemetry">Telemetry Charts</button>
+                        <button class="tab-btn" data-tab="corners">Corner Analysis</button>
+                        <button class="tab-btn" data-tab="suspension">Suspension Analysis</button>
+                        <button class="tab-btn" data-tab="balance">Balance Distribution</button>
+                    </div>
+                    
+                    <div id="overview" class="tab-content active">
+                        <div class="metrics-grid">
+                            <div class="metric-card usos-card">
+                                <h4>USOS Factor</h4>
+                                <div class="metric-value" id="usosValue">-</div>
+                                <div class="metric-unit">degrees (+ = understeer, - = oversteer)</div>
+                                <div class="metric-confidence">Confidence: <span id="usosConfidence">-</span>%</div>
+                            </div>
+                            <div class="metric-card balance-card">
+                                <h4>Balance Distribution</h4>
+                                <div class="metric-value" id="balanceDistribution">-</div>
+                                <div class="metric-unit">US/N/OS %</div>
+                                <div class="balance-indicator" id="balanceIndicator"></div>
+                                <div class="metric-confidence">Based on actual setup alignment</div>
+                            </div>
+                            <div class="metric-card yaw-card">
+                                <h4>Suspension Travel</h4>
+                                <div class="metric-value" id="suspensionTravel">-</div>
+                                <div class="metric-unit">avg front/rear %</div>
+                                <div class="metric-confidence">Bumpstop Hits: <span id="bumpstopHits">-</span></div>
+                            </div>
+                            <div class="metric-card slip-card">
+                                <h4>Wheel Slip Analysis</h4>
+                                <div class="metric-value" id="wheelSlipAnalysis">-</div>
+                                <div class="metric-unit">% slip events</div>
+                                <div class="metric-confidence">Using corrected channels</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="telemetry" class="tab-content">
+                        <div class="chart-grid">
+                            <div class="chart-container" style="position: relative; height: 400px;">
+                                <h4>USOS Analysis - Understeer & Oversteer Detection</h4>
+                                <canvas id="usosChart"></canvas>
+                            </div>
+                            <div class="chart-container" style="position: relative; height: 300px;">
+                                <h4>Balance Distribution Pie Chart</h4>
+                                <canvas id="balanceChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="corners" class="tab-content">
+                        <div class="corner-analysis-header">
+                            <h4>Corner-by-Corner Analysis</h4>
+                            <div class="phase-legend">
+                                <span class="phase-entry">Understeer</span>
+                                <span class="phase-apex">Neutral</span>
+                                <span class="phase-exit">Oversteer</span>
+                            </div>
+                        </div>
+                        <div id="cornersTable" class="corners-table"></div>
+                    </div>
+
+                    <div id="suspension" class="tab-content">
+                        <div class="chart-container" style="position: relative; height: 400px;">
+                            <h4>Suspension Travel Analysis</h4>
+                            <canvas id="suspensionChart"></canvas>
+                        </div>
+                        <div class="suspension-summary" id="suspensionSummary">
+                            <h4>Suspension Insights</h4>
+                            <div class="suspension-metrics">
+                                <div class="susp-metric">
+                                    <span class="susp-label">Front Avg Travel:</span>
+                                    <span class="susp-value" id="frontAvgTravel">-</span>
+                                </div>
+                                <div class="susp-metric">
+                                    <span class="susp-label">Rear Avg Travel:</span>
+                                    <span class="susp-value" id="rearAvgTravel">-</span>
+                                </div>
+                                <div class="susp-metric">
+                                    <span class="susp-label">Bumpstop Hits:</span>
+                                    <span class="susp-value" id="bumpstopCount">-</span>
+                                </div>
+                                <div class="susp-metric">
+                                    <span class="susp-label">Ride Height Issues:</span>
+                                    <span class="susp-value" id="rideHeightStatus">-</span>
                                 </div>
                             </div>
-                            <h4>Car Balance</h4>
                         </div>
-                        
-                        <div class="stability-meters">
-                            <div class="meter-item">
-                                <label>Understeer Events</label>
-                                <div class="meter-bar">
-                                    <div class="meter-fill understeer-meter" id="understeerMeter"></div>
+                    </div>
+
+                    <div id="balance" class="tab-content">
+                        <div class="balance-breakdown">
+                            <h4>Detailed Balance Breakdown</h4>
+                            <div class="balance-stats">
+                                <div class="balance-stat understeer-stat">
+                                    <h5>Understeer Tendency</h5>
+                                    <div class="stat-value" id="understeerPercent">-</div>
+                                    <div class="stat-description">Car requires more steering input than kinematic neutral</div>
                                 </div>
-                                <span class="meter-value" id="understeerValue">0</span>
-                            </div>
-                            
-                            <div class="meter-item">
-                                <label>Oversteer Events</label>
-                                <div class="meter-bar">
-                                    <div class="meter-fill oversteer-meter" id="oversteerMeter"></div>
+                                <div class="balance-stat neutral-stat">
+                                    <h5>Neutral Balance</h5>
+                                    <div class="stat-value" id="neutralPercent">-</div>
+                                    <div class="stat-description">Car follows kinematic steering requirements</div>
                                 </div>
-                                <span class="meter-value" id="oversteerValue">0</span>
-                            </div>
-                            
-                            <div class="meter-item">
-                                <label>Overall Balance</label>
-                                <div class="meter-bar">
-                                    <div class="meter-fill" id="overallMeter"></div>
+                                <div class="balance-stat oversteer-stat">
+                                    <h5>Oversteer Tendency</h5>
+                                    <div class="stat-value" id="oversteerPercent">-</div>
+                                    <div class="stat-description">Car requires less steering input than neutral</div>
                                 </div>
-                                <span class="meter-value" id="overallValue">72</span>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </section>
+            </section>
 
-        <!-- Setup Controls Section -->
-        <section class="setup-controls hidden" id="setupControls">
-            <div class="card">
-                <div class="card__header collapsible" id="setupHeader">
-                    <div class="header-left">
-                        <h2>Car Setup Parameters</h2>
-                        <p class="setup-subtitle">Adjust parameters to analyze their impact on handling</p>
-                    </div>
-                    <button class="collapse-btn" id="setupCollapseBtn">
-                        <span class="collapse-icon">▼</span>
-                    </button>
+            <section id="recommendationsSection" class="card hidden">
+                <div class="card__header">
+                    <h2>4. Intelligent Setup Recommendations</h2>
+                    <p class="recommendations-subtitle">Based on actual setup analysis • Parameter validation • Multiple approaches</p>
                 </div>
-                <div class="card__body collapsible-content" id="setupContent">
-                    <div class="setup-validation" id="setupValidation"></div>
-                    <div class="setup-grid" id="setupSliders">
-                        <!-- Dynamic sliders will be generated here -->
-                    </div>
-                </div>
-            </div>
-        </section>
+                <div class="card__body">
+                    <div class="recommendation-groups-container">
+                        <div class="recommendation-group conservative-group">
+                            <div id="group1Recommendations" class="group-content">
+                                <h4><span class="group-icon">🛡️</span> Group 1: Conservative Approach</h4>
+                                <p class="group-description">Small incremental changes (±1-2 clicks). Focus on electronic aids first. Safer, predictable improvements.</p>
+                                <div class="recommendations-list" id="conservativeList">
+                                    <div class="loading-placeholder">Load setup and telemetry data to see recommendations...</div>
+                                </div>
+                            </div>
+                        </div>
 
-        <!-- Analysis Results Section -->
-        <section class="analysis-section hidden" id="analysisSection">
-            <!-- Charts Section with Tabs -->
-            <div class="charts-container">
-                <div class="chart-tabs">
-                    <button class="chart-tab active" data-chart="stability">Stability Analysis</button>
-                    <button class="chart-tab" data-chart="trajectory">Trajectory Analysis</button>
-                    <button class="chart-tab" data-chart="eventMap">Event Map</button>
-                </div>
-                
-                <div class="chart-panels">
-                    <!-- Stability Chart -->
-                    <div class="chart-panel active" id="stabilityPanel">
-                        <div class="chart-header">
-                            <div class="chart-info">
-                                <h3>Stability Analysis</h3>
-                                <p class="chart-subtitle">Understeer/Oversteer events over track distance (zoomable)</p>
-                            </div>
-                            <div class="chart-controls">
-                                <button class="btn btn--outline btn--sm" id="stabilityReset" title="Reset Zoom">🔄</button>
-                                <button class="btn btn--outline btn--sm" id="stabilityFullscreen" title="Full Screen">📈</button>
+                        <div class="recommendation-group mechanical-group">
+                            <div id="group2Recommendations" class="group-content">
+                                <h4><span class="group-icon">🔧</span> Group 2: Mechanical Approach</h4>
+                                <p class="group-description">Medium changes (±3-5 clicks). Focus on suspension, ARBs, springs. More aggressive but stable.</p>
+                                <div class="recommendations-list" id="mechanicalList">
+                                    <div class="loading-placeholder">Load setup and telemetry data to see recommendations...</div>
+                                </div>
                             </div>
                         </div>
-                        <div class="chart-container" style="position: relative; min-height: 500px;">
-                            <canvas id="stabilityChart"></canvas>
-                        </div>
-                        <div class="chart-legend">
-                            <div class="legend-item">
-                                <div class="legend-chip understeer"></div>
-                                <span>Understeer</span>
-                            </div>
-                            <div class="legend-item">
-                                <div class="legend-chip neutral"></div>
-                                <span>Neutral</span>
-                            </div>
-                            <div class="legend-item">
-                                <div class="legend-chip oversteer"></div>
-                                <span>Oversteer</span>
+
+                        <div class="recommendation-group aerodynamic-group">
+                            <div id="group3Recommendations" class="group-content">
+                                <h4><span class="group-icon">✈️</span> Group 3: Aerodynamic Approach</h4>
+                                <p class="group-description">Larger changes (±2-4 clicks). Focus on aero balance, ride height. Fastest but requires driver adaptation.</p>
+                                <div class="recommendations-list" id="aerodynamicList">
+                                    <div class="loading-placeholder">Load setup and telemetry data to see recommendations...</div>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Trajectory Chart -->
-                    <div class="chart-panel" id="trajectoryPanel">
-                        <div class="chart-header">
-                            <div class="chart-info">
-                                <h3>Trajectory Analysis</h3>
-                                <p class="chart-subtitle">Optimal racing line vs actual trajectory with corner analysis (zoomable)</p>
+                    <div class="recommendation-actions">
+                        <button id="applyGroup1Btn" class="btn btn--outline">Apply Conservative Changes</button>
+                        <button id="applyGroup2Btn" class="btn btn--secondary">Apply Mechanical Changes</button>
+                        <button id="applyGroup3Btn" class="btn btn--primary">Apply Aerodynamic Changes</button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="setupSection" class="card hidden">
+                <div class="card__header">
+                    <h2>5. Interactive Setup Tuning</h2>
+                    <p class="setup-subtitle">Real-time parameter validation • Live impact preview • Export optimized setup</p>
+                </div>
+                <div class="card__body">
+                    <div class="setup-tabs">
+                        <button class="setup-tab-btn active" data-tab="aero">Aerodynamics</button>
+                        <button class="setup-tab-btn" data-tab="suspensionTab">Suspension</button>
+                        <button class="setup-tab-btn" data-tab="electronics">Electronics</button>
+                        <button class="setup-tab-btn" data-tab="tires">Tires</button>
+                    </div>
+
+                    <div id="aero" class="setup-tab-content active">
+                        <div class="setup-controls">
+                            <div class="control-group">
+                                <label for="splitter">Front Splitter</label>
+                                <div class="control-wrapper">
+                                    <input type="range" id="splitter" class="setup-slider" min="0" max="5" step="1" value="2">
+                                    <span class="control-value" id="splitterValue">2</span>
+                                    <span class="control-limits" id="splitterLimits">0-5</span>
+                                </div>
+                                <div class="impact-preview neutral" id="splitterImpact">Adjust to change front downforce balance</div>
                             </div>
-                            <div class="chart-controls">
-                                <button class="btn btn--outline btn--sm" id="trajectoryReset" title="Reset Zoom">🔄</button>
-                                <button class="btn btn--outline btn--sm" id="trajectoryFullscreen" title="Full Screen">📈</button>
-                            </div>
-                        </div>
-                        <div class="chart-container" style="position: relative; min-height: 500px;">
-                            <canvas id="trajectoryChart"></canvas>
-                        </div>
-                        <div class="chart-legend">
-                            <div class="legend-item">
-                                <div class="legend-line optimal"></div>
-                                <span>Optimal Racing Line</span>
-                            </div>
-                            <div class="legend-item">
-                                <div class="legend-line actual"></div>
-                                <span>Actual Trajectory</span>
-                            </div>
-                            <div class="legend-item">
-                                <div class="corner-speed slow"></div>
-                                <span>Slow Corner</span>
-                            </div>
-                            <div class="legend-item">
-                                <div class="corner-speed fast"></div>
-                                <span>Fast Corner</span>
+                            <div class="control-group">
+                                <label for="rearWing">Rear Wing</label>
+                                <div class="control-wrapper">
+                                    <input type="range" id="rearWing" class="setup-slider" min="0" max="12" step="1" value="5">
+                                    <span class="control-value" id="rearWingValue">5</span>
+                                    <span class="control-limits" id="rearWingLimits">0-12</span>
+                                </div>
+                                <div class="impact-preview neutral" id="rearWingImpact">Adjust to change rear downforce and stability</div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Event Map Chart -->
-                    <div class="chart-panel" id="eventMapPanel">
-                        <div class="chart-header">
-                            <div class="chart-info">
-                                <h3>Event Map</h3>
-                                <p class="chart-subtitle">Ideal curve vs driving trajectory with understeer/oversteer events</p>
+                    <div id="suspensionTab" class="setup-tab-content">
+                        <div class="setup-controls">
+                            <div class="control-group">
+                                <label for="arbFront">Front Anti-Roll Bar</label>
+                                <div class="control-wrapper">
+                                    <input type="range" id="arbFront" class="setup-slider" min="0" max="30" step="1" value="14">
+                                    <span class="control-value" id="arbFrontValue">14</span>
+                                    <span class="control-limits" id="arbFrontLimits">0-30</span>
+                                </div>
+                                <div class="impact-preview neutral" id="arbFrontImpact">Higher values reduce front grip in corners</div>
                             </div>
-                            <div class="chart-controls">
-                                <button class="btn btn--outline btn--sm" id="eventMapReset" title="Reset Zoom">🔄</button>
-                                <button class="btn btn--outline btn--sm" id="eventMapFullscreen" title="Full Screen">📈</button>
-                            </div>
-                        </div>
-                        <div class="chart-container" style="position: relative; min-height: 500px;">
-                            <canvas id="eventMapChart"></canvas>
-                        </div>
-                        <div class="chart-legend">
-                            <div class="legend-item">
-                                <div class="legend-line ideal"></div>
-                                <span>Ideal Racing Curve</span>
-                            </div>
-                            <div class="legend-item">
-                                <div class="legend-line driving"></div>
-                                <span>Driving Trajectory</span>
-                            </div>
-                            <div class="legend-item">
-                                <div class="legend-dot understeer-dot"></div>
-                                <span>Understeer Events</span>
-                            </div>
-                            <div class="legend-item">
-                                <div class="legend-dot oversteer-dot"></div>
-                                <span>Oversteer Events</span>
+                            <div class="control-group">
+                                <label for="arbRear">Rear Anti-Roll Bar</label>
+                                <div class="control-wrapper">
+                                    <input type="range" id="arbRear" class="setup-slider" min="0" max="30" step="1" value="17">
+                                    <span class="control-value" id="arbRearValue">17</span>
+                                    <span class="control-limits" id="arbRearLimits">0-30</span>
+                                </div>
+                                <div class="impact-preview neutral" id="arbRearImpact">Higher values reduce rear grip and increase rotation</div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
 
-            <!-- Recommendations Panel -->
-            <div class="recommendations-panel">
-                <div class="card">
-                    <div class="card__header collapsible" id="recommendationsHeader">
-                        <div class="header-left">
-                            <h2>Setup Recommendations</h2>
-                            <p class="recommendations-subtitle">Specific numeric suggestions with priority levels</p>
-                        </div>
-                        <button class="collapse-btn" id="recommendationsCollapseBtn">
-                            <span class="collapse-icon">▼</span>
-                        </button>
-                    </div>
-                    <div class="card__body collapsible-content" id="recommendationsContent">
-                        <div class="recommendations-filters">
-                            <button class="filter-btn active" data-priority="all">All</button>
-                            <button class="filter-btn" data-priority="critical">🔧 Critical</button>
-                            <button class="filter-btn" data-priority="moderate">⚙️ Moderate</button>
-                            <button class="filter-btn" data-priority="minor">🔍 Minor</button>
-                        </div>
-                        <div class="recommendations-grid" id="recommendationsList">
-                            <!-- Recommendations will be generated here -->
+                    <div id="electronics" class="setup-tab-content">
+                        <div class="setup-controls">
+                            <div class="control-group">
+                                <label for="tc1">Traction Control 1</label>
+                                <div class="control-wrapper">
+                                    <input type="range" id="tc1" class="setup-slider" min="0" max="11" step="1" value="3">
+                                    <span class="control-value" id="tc1Value">3</span>
+                                    <span class="control-limits" id="tc1Limits">0-11</span>
+                                </div>
+                                <div class="impact-preview neutral" id="tc1Impact">Lower values allow more wheel slip and rotation</div>
+                            </div>
+                            <div class="control-group">
+                                <label for="tc2">Traction Control 2</label>
+                                <div class="control-wrapper">
+                                    <input type="range" id="tc2" class="setup-slider" min="0" max="20" step="1" value="5">
+                                    <span class="control-value" id="tc2Value">5</span>
+                                    <span class="control-limits" id="tc2Limits">0-20</span>
+                                </div>
+                                <div class="impact-preview neutral" id="tc2Impact">Higher values provide more traction assistance</div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        </section>
 
-        <!-- Full Screen Chart Modal -->
-        <div class="fullscreen-modal hidden" id="fullscreenModal">
-            <div class="fullscreen-content">
-                <div class="fullscreen-header">
-                    <h3 id="fullscreenTitle"></h3>
-                    <button class="btn btn--outline" id="closeFullscreen">✕</button>
-                </div>
-                <div class="fullscreen-chart-container">
-                    <canvas id="fullscreenChart"></canvas>
-                </div>
-            </div>
-        </div>
+                    <div id="tires" class="setup-tab-content">
+                        <div class="setup-controls">
+                            <div class="control-group">
+                                <label for="pressureFL">Front Left Pressure (PSI)</label>
+                                <div class="control-wrapper">
+                                    <input type="range" id="pressureFL" class="setup-slider" min="24.0" max="32.0" step="0.1" value="27.4">
+                                    <span class="control-value" id="pressureFLValue">27.4</span>
+                                    <span class="control-limits" id="pressureFLLimits">24.0-32.0</span>
+                                </div>
+                                <div class="impact-preview neutral" id="pressureFLImpact">Lower pressure increases contact patch and grip</div>
+                            </div>
+                            <div class="control-group">
+                                <label for="pressureRF">Front Right Pressure (PSI)</label>
+                                <div class="control-wrapper">
+                                    <input type="range" id="pressureRF" class="setup-slider" min="24.0" max="32.0" step="0.1" value="27.4">
+                                    <span class="control-value" id="pressureRFValue">27.4</span>
+                                    <span class="control-limits" id="pressureRFLimits">24.0-32.0</span>
+                                </div>
+                                <div class="impact-preview neutral" id="pressureRFImpact">Lower pressure increases contact patch and grip</div>
+                            </div>
+                        </div>
+                    </div>
 
-        <!-- Loading Overlay -->
-        <div class="loading-overlay hidden" id="loadingOverlay">
-            <div class="loading-content">
-                <div class="spinner"></div>
-                <h3>Processing Telemetry Data...</h3>
-                <p id="loadingMessage">Initializing analysis...</p>
-                <div class="loading-progress">
-                    <div class="loading-progress-bar" id="loadingProgressBar"></div>
+                    <div class="setup-actions">
+                        <button id="resetSetupBtn" class="btn btn--outline">Reset to Current</button>
+                        <button id="validateSetupBtn" class="btn btn--secondary">Validate All Parameters</button>
+                        <button id="exportSetupBtn" class="btn btn--primary">Export Optimized Setup</button>
+                    </div>
                 </div>
-            </div>
-        </div>
+            </section>
+
+            <section id="reportSection" class="card hidden">
+                <div class="card__header">
+                    <h2>6. Professional Analysis Report</h2>
+                    <p class="report-subtitle">Comprehensive analysis with confidence metrics and improvement predictions</p>
+                </div>
+                <div class="card__body">
+                    <div class="report-content">
+                        <div class="report-summary" id="reportSummary">
+                            <h4>Loading analysis report...</h4>
+                        </div>
+                        <div class="confidence-metrics" id="confidenceMetrics">
+                            <h4>Loading confidence metrics...</h4>
+                        </div>
+                        <div class="improvement-predictions" id="improvementPredictions">
+                            <h4>Loading improvement predictions...</h4>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
     </div>
 
     <script src="app.js"></script>
