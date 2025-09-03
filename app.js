@@ -121,23 +121,36 @@ class ACCTelemetryApp {
 
         this.showStatus('Processing telemetry data...', 'info');
         
-        // Pre-process to correct potential data inversions
-        this.preProcessTelemetry();
+        try {
+            // Pre-process to correct potential data inversions
+            this.preProcessTelemetry();
 
-        // Perform the main analysis
-        this.processedData = this.performAdvancedAnalysis();
-        
-        // Generate recommendations based on analysis
-        this.generateGroupedRecommendations();
-        
-        // Display all results
-        this.displayAnalysisResults();
-        
-        // Generate professional report summary
-        this.generateProfessionalReport();
+            // Perform the main analysis
+            this.processedData = this.performAdvancedAnalysis();
+            
+            // Generate recommendations based on analysis
+            this.generateGroupedRecommendations();
+            
+            // Display all results
+            this.displayAnalysisResults();
+            
+            // Generate professional report summary
+            this.generateProfessionalReport();
 
-        this.showStatus('Analysis complete. Results are ready.', 'success');
-        document.querySelector('.tab-btn[data-tab="analysis"]').click();
+            this.showStatus('Analysis complete. Results are ready.', 'success');
+
+        } catch (error) {
+            console.error('An error occurred during data processing or display:', error);
+            this.showStatus('Failed to display all analysis results. Check console for details.', 'error');
+        } finally {
+            // CORRECTED: Ensure the tab switch happens even if an error occurs during display.
+            const analysisTab = document.querySelector('.tab-btn[data-tab="analysis"]');
+            if (analysisTab) {
+                analysisTab.click();
+            } else {
+                console.error('Could not find the analysis tab button to click.');
+            }
+        }
     }
 
     performAdvancedAnalysis() {
